@@ -62,7 +62,7 @@ vocabulary_to_index = {v:k for k,v in enumerate(vocabulary)}
 #%%
 # Load the dataset
 from datasets import load_dataset
-ds = load_dataset("yhavinga/ccmatrix", "en-it", streaming=True)
+ds = load_dataset("yhavinga/ccmatrix", "en-it", cache_dir=CACHE_DIR)
 dataset_iter = iter(ds['train'])
 
 #%%
