@@ -122,7 +122,7 @@ def create_masks(eng_batch, it_batch):
 transformer.train()
 transformer.to(device)
 total_loss = 0
-num_epochs = 10
+num_epochs = 1
 
 for epoch in range(num_epochs):
     print(f"Epoch {epoch}")
