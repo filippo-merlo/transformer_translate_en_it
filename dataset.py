@@ -4,9 +4,9 @@ from config import *
 
 # Define vocabulary
 # 1 Character based tokenization
-START_TOKEN = ''
-PADDING_TOKEN = ''
-END_TOKEN = ''
+START_TOKEN = '<START>'
+PADDING_TOKEN = '<PADDING>'
+END_TOKEN = '<END>'
 
 german_vocabulary = [
     START_TOKEN, ' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', 
