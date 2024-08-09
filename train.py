@@ -21,7 +21,7 @@ else:
     device = torch.device("cpu")
     print("Using CPU")
 '''
-device = "cuda"
+device = torch.device("cuda")
 
 import torch
 
