@@ -29,7 +29,7 @@ num_heads = 8
 drop_prob = 0.1
 num_layers = 1
 max_sequence_length = 200
-kn_vocab_size = len(vocabulary)
+it_vocab_size = len(vocabulary)
 
 transformer = Transformer(d_model, 
                           ffn_hidden,
@@ -37,7 +37,7 @@ transformer = Transformer(d_model,
                           drop_prob, 
                           num_layers, 
                           max_sequence_length,
-                          kn_vocab_size,
+                          it_vocab_size,
                           vocabulary_to_index,
                           vocabulary_to_index,
                           START_TOKEN, 
@@ -68,31 +68,51 @@ for params in transformer.parameters():
 
 optim = torch.optim.Adam(transformer.parameters(), lr=1e-4)
 
+# A large negative constant used to represent negative infinity in mask calculations.
 NEG_INFTY = -1e9
 
-def create_masks(eng_batch, kn_batch):
+def create_masks(eng_batch, it_batch):
+    # Determine the number of sentences in the batch.
     num_sentences = len(eng_batch)
-    look_ahead_mask = torch.full([max_sequence_length, max_sequence_length] , True)
-    look_ahead_mask = torch.triu(look_ahead_mask, diagonal=1)
-    encoder_padding_mask = torch.full([num_sentences, max_sequence_length, max_sequence_length] , False)
-    decoder_padding_mask_self_attention = torch.full([num_sentences, max_sequence_length, max_sequence_length] , False)
-    decoder_padding_mask_cross_attention = torch.full([num_sentences, max_sequence_length, max_sequence_length] , False)
+    
+    # Create a look-ahead mask for the decoder to prevent it from attending to future tokens.
+    look_ahead_mask = torch.full([max_sequence_length, max_sequence_length], True)  # Initialize with True (masking)
+    look_ahead_mask = torch.triu(look_ahead_mask, diagonal=1)  # Mask the upper triangle (excluding diagonal)
 
+    # Initialize padding masks for the encoder and decoder with False (no masking)
+    encoder_padding_mask = torch.full([num_sentences, max_sequence_length, max_sequence_length], False)
+    decoder_padding_mask_self_attention = torch.full([num_sentences, max_sequence_length, max_sequence_length], False)
+    decoder_padding_mask_cross_attention = torch.full([num_sentences, max_sequence_length, max_sequence_length], False)
+
+    # Iterate over each sentence in the batch
     for idx in range(num_sentences):
-      eng_sentence_length, kn_sentence_length = len(eng_batch[idx]), len(kn_batch[idx])
-      eng_chars_to_padding_mask = np.arange(eng_sentence_length + 1, max_sequence_length)
-      kn_chars_to_padding_mask = np.arange(kn_sentence_length + 1, max_sequence_length)
-      encoder_padding_mask[idx, :, eng_chars_to_padding_mask] = True
-      encoder_padding_mask[idx, eng_chars_to_padding_mask, :] = True
-      decoder_padding_mask_self_attention[idx, :, kn_chars_to_padding_mask] = True
-      decoder_padding_mask_self_attention[idx, kn_chars_to_padding_mask, :] = True
-      decoder_padding_mask_cross_attention[idx, :, eng_chars_to_padding_mask] = True
-      decoder_padding_mask_cross_attention[idx, kn_chars_to_padding_mask, :] = True
+        # Get the length of the English and Italian sentences
+        eng_sentence_length, it_sentence_length = len(eng_batch[idx]), len(it_batch[idx])
+        
+        # Identify the positions in the sequence that should be masked (i.e., padding positions)
+        eng_chars_to_padding_mask = np.arange(eng_sentence_length + 1, max_sequence_length)
+        it_chars_to_padding_mask = np.arange(it_sentence_length + 1, max_sequence_length)
+        
+        # Apply padding masks for the encoder (prevent attention to padding tokens)
+        encoder_padding_mask[idx, :, eng_chars_to_padding_mask] = True
+        encoder_padding_mask[idx, eng_chars_to_padding_mask, :] = True
+        
+        # Apply padding masks for the decoder's self-attention mechanism
+        decoder_padding_mask_self_attention[idx, :, it_chars_to_padding_mask] = True
+        decoder_padding_mask_self_attention[idx, it_chars_to_padding_mask, :] = True
+        
+        # Apply padding masks for the decoder's cross-attention mechanism (attention to encoder output)
+        decoder_padding_mask_cross_attention[idx, :, eng_chars_to_padding_mask] = True
+        decoder_padding_mask_cross_attention[idx, it_chars_to_padding_mask, :] = True
 
+    # Convert padding masks into attention masks using NEG_INFTY (large negative value)
     encoder_self_attention_mask = torch.where(encoder_padding_mask, NEG_INFTY, 0)
-    decoder_self_attention_mask =  torch.where(look_ahead_mask + decoder_padding_mask_self_attention, NEG_INFTY, 0)
+    decoder_self_attention_mask = torch.where(look_ahead_mask + decoder_padding_mask_self_attention, NEG_INFTY, 0)
     decoder_cross_attention_mask = torch.where(decoder_padding_mask_cross_attention, NEG_INFTY, 0)
+    
+    # Return the computed attention masks for the encoder and decoder
     return encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask
+
 
 
 transformer.train()
@@ -105,11 +125,11 @@ for epoch in range(num_epochs):
     iterator = iter(train_loader)
     for batch_num, batch in enumerate(iterator):
         transformer.train()
-        eng_batch, kn_batch = batch
-        encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask = create_masks(eng_batch, kn_batch)
+        eng_batch, it_batch = batch
+        encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask = create_masks(eng_batch, it_batch)
         optim.zero_grad()
-        kn_predictions = transformer(eng_batch,
-                                     kn_batch,
+        it_predictions = transformer(eng_batch,
+                                     it_batch,
                                      encoder_self_attention_mask.to(device), 
                                      decoder_self_attention_mask.to(device), 
                                      decoder_cross_attention_mask.to(device),
@@ -117,9 +137,9 @@ for epoch in range(num_epochs):
                                      enc_end_token=False,
                                      dec_start_token=True,
                                      dec_end_token=True)
-        labels = transformer.decoder.sentence_embedding.batch_tokenize(kn_batch, start_token=False, end_token=True)
+        labels = transformer.decoder.sentence_embedding.batch_tokenize(it_batch, start_token=False, end_token=True)
         loss = criterion(
-            kn_predictions.view(-1, kn_vocab_size).to(device),
+            it_predictions.view(-1, it_vocab_size).to(device),
             labels.view(-1).to(device)
         ).to(device)
         valid_indicies = torch.where(labels.view(-1) == vocabulary_to_index[PADDING_TOKEN], False, True)
@@ -130,22 +150,22 @@ for epoch in range(num_epochs):
         if batch_num % 100 == 0:
             print(f"Iteration {batch_num} : {loss.item()}")
             print(f"English: {eng_batch[0]}")
-            print(f"Italian Translation: {kn_batch[0]}")
-            kn_sentence_predicted = torch.argmax(kn_predictions[0], axis=1)
+            print(f"Italian Translation: {it_batch[0]}")
+            it_sentence_predicted = torch.argmax(it_predictions[0], axis=1)
             predicted_sentence = ""
-            for idx in kn_sentence_predicted:
+            for idx in it_sentence_predicted:
               if idx == vocabulary_to_index[END_TOKEN]:
                 break
               predicted_sentence += index_to_vocabulary[idx.item()]
             print(f"Italian Prediction: {predicted_sentence}")
 
             transformer.eval()
-            kn_sentence = ("",)
+            it_sentence = ("",)
             eng_sentence = ("should we go to the mall?",)
             for word_counter in range(max_sequence_length):
-                encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask= create_masks(eng_sentence, kn_sentence)
+                encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask= create_masks(eng_sentence, it_sentence)
                 predictions = transformer(eng_sentence,
-                                          kn_sentence,
+                                          it_sentence,
                                           encoder_self_attention_mask.to(device), 
                                           decoder_self_attention_mask.to(device), 
                                           decoder_cross_attention_mask.to(device),
@@ -156,11 +176,11 @@ for epoch in range(num_epochs):
                 next_token_prob_distribution = predictions[0][word_counter] # not actual probs
                 next_token_index = torch.argmax(next_token_prob_distribution).item()
                 next_token = index_to_vocabulary[next_token_index]
-                kn_sentence = (kn_sentence[0] + next_token, )
+                it_sentence = (it_sentence[0] + next_token, )
                 if next_token == END_TOKEN:
                   break
             
-            print(f"Evaluation translation (should we go to the mall?) : {kn_sentence}")
+            print(f"Evaluation translation (should we go to the mall?) : {it_sentence}")
             print("-------------------------------------------")
 
 import os
