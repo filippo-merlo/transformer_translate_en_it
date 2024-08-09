@@ -51,7 +51,7 @@ vocabulary = [
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'l', 
     'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'z', 
     'j', 'k', 'w', 'x', 'y', 
-    'à', 'é', 'è', 'ì', 'ò', 'ù', 
+    'à', 'é', 'è', 'ì', 'ò', 'ù',
     '{', '|', '}', '~', PADDING_TOKEN, END_TOKEN
 ]
 
@@ -119,6 +119,10 @@ for index in range(len(italian_sentences)):
 
 print(f"Number of sentences: {len(italian_sentences)}")
 print(f"Number of valid sentences: {len(valid_sentence_indicies)}")
+
+
+italian_sentences = [italian_sentences[i] for i in valid_sentence_indicies]
+english_sentences = [english_sentences[i] for i in valid_sentence_indicies]
 
 #%%
 from torch.utils.data import Dataset, DataLoader
