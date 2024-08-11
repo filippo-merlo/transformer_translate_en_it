@@ -124,7 +124,7 @@ num_epochs = 10
 for epoch in range(num_epochs):
     print(f"Epoch {epoch}")
     iterator = iter(train_loader)
-    for batch_num, batch in enumerate(iterator):
+    for batch_num, batch in tqdm(enumerate(iterator)):
         transformer.train()
         eng_batch, it_batch = batch
         encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask = create_masks(eng_batch, it_batch, TOKENIZER)
