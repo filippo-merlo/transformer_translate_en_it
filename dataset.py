@@ -16,7 +16,7 @@ END_TOKEN = '<END>'
 TOKENIZATION_LEVEL = 'char'
 
 if TOKENIZATION_LEVEL == 'char':
-    vocabulary = [
+    italian_vocabulary = [
         START_TOKEN, ' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', '–','—',
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
         ':', '<', '=', '>', '?', '@', ';', 
@@ -29,11 +29,11 @@ if TOKENIZATION_LEVEL == 'char':
     ]
 
     # Get index to character and character to index mappings
-    it_index_to_vocabulary = {k:v for k,v in enumerate(vocabulary)}
-    en_index_to_vocabulary = {k:v for k,v in enumerate(vocabulary)}
+    it_index_to_vocabulary = {k:v for k,v in enumerate(italian_vocabulary)}
+    en_index_to_vocabulary = {k:v for k,v in enumerate(italian_vocabulary)}
 
-    it_vocabulary_to_index = {v:k for k,v in enumerate(vocabulary)}
-    en_vocabulary_to_index = {v:k for k,v in enumerate(vocabulary)}
+    it_vocabulary_to_index = {v:k for k,v in enumerate(italian_vocabulary)}
+    en_vocabulary_to_index = {v:k for k,v in enumerate(italian_vocabulary)}
 
 
     # Get subset of sentences from dataset: 200000
@@ -80,8 +80,8 @@ if TOKENIZATION_LEVEL == 'char':
         italian_sentence, english_sentence = italian_sentences[index], english_sentences[index]
         if is_valid_length(italian_sentence, max_sequence_length) \
         and is_valid_length(english_sentence, max_sequence_length) \
-        and is_valid_tokens(italian_sentence, vocabulary)\
-        and is_valid_tokens(english_sentence, vocabulary):
+        and is_valid_tokens(italian_sentence, italian_vocabulary)\
+        and is_valid_tokens(english_sentence, italian_vocabulary):
             valid_sentence_indicies.append(index)
 
     print(f"Number of sentences: {len(italian_sentences)}")
