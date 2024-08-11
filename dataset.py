@@ -131,13 +131,23 @@ elif TOKENIZATION_LEVEL == 'word':
     # The sentence is less than the max sequence length
     def is_valid_length(sentence, max_sequence_length):
         return len(list(sentence)) < (max_sequence_length - 1) # need to re-add the end token so leaving 1 space
+    
+    # All tokens in the sentence are in the vocabulary
+    def is_valid_tokens(sentence, vocab):
+        for token in list(set(sentence)):
+            if token not in vocab:
+                return False
+        return True
 
     # Filter out sentences that are too long or have invalid tokens
     valid_sentence_indicies = []
     for index in range(len(italian_sentences)):
         italian_sentence, english_sentence = italian_sentences[index], english_sentences[index]
         if is_valid_length(italian_sentence, max_sequence_length) \
-        and is_valid_length(english_sentence, max_sequence_length):
+        and is_valid_length(english_sentence, max_sequence_length)\
+        and is_valid_tokens(italian_sentence, italian_vocabulary)\
+        and is_valid_tokens(english_sentence, english_vocabulary):
+            valid_sentence_indicies.append(index)
             valid_sentence_indicies.append(index)
 
     print(f"Number of sentences: {len(italian_sentences)}")
