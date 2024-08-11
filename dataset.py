@@ -96,25 +96,12 @@ elif TOKENIZATION_LEVEL == 'word':
     import nltk 
     from nltk.tokenize import word_tokenize
     nltk.download('punkt_tab')
+    import itertools
 
     def custom_tokenizer(sentence):
-        punctuation = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.',
-                    ':', '<', '=', '>', '?', ';', 
-                    '[', '\\', ']', '^', '_', '`', '‘', '’', '“', '”', '…', '«', '»',
-                    '{', '|', '}', '~']
-
-        token_list = word_tokenize(sentence)
-        spaced_token_list = []
-
-        for i, token in enumerate(token_list):
-            if token in punctuation:
-                spaced_token_list.append(token)
-            else:
-                if i > 0:
-                    spaced_token_list.append(' ')
-                spaced_token_list.append(token)
+        ll = [[word_tokenize(w), ' '] for w in sentence.split()]
+        spaced_token_list = list(itertools.chain(*list(itertools.chain(*ll))))
         return spaced_token_list
-
 
     TOKENIZER = custom_tokenizer
     italian_vocabulary = [START_TOKEN, ' ']
@@ -126,6 +113,7 @@ elif TOKENIZATION_LEVEL == 'word':
     english_words = []
     english_sentences = []
     italian_sentences = []
+
     for _ in tqdm(range(TOTAL_SENTENCES)):
         example = next(dataset_iter)
         italian_sentences.append(example['translation']['it'].lower())
@@ -142,7 +130,6 @@ elif TOKENIZATION_LEVEL == 'word':
 
     it_vocabulary_to_index = {v:k for k,v in enumerate(italian_vocabulary)}
     en_vocabulary_to_index = {v:k for k,v in enumerate(english_vocabulary)}
-
 
     # set max sequence length and filter out sentences that are too long or have invalid tokens
     max_sequence_length = 200
