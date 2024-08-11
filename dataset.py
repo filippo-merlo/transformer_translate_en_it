@@ -148,7 +148,7 @@ elif TOKENIZATION_LEVEL == 'word':
         and is_valid_tokens(italian_sentence, italian_vocabulary)\
         and is_valid_tokens(english_sentence, english_vocabulary):
             valid_sentence_indicies.append(index)
-
+#ijb
     print(f"Number of sentences: {len(italian_sentences)}")
     print(f"Number of valid sentences: {len(valid_sentence_indicies)}")
 
