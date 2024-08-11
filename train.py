@@ -56,12 +56,6 @@ train_loader = DataLoader(dataset, batch_size)
 iterator = iter(train_loader)
 
 #%%
-for batch_num, batch in enumerate(iterator):
-    print(batch)
-    if batch_num > 3:
-        break
-
-#%%
 from torch import nn
 
 criterion = nn.CrossEntropyLoss(ignore_index=it_vocabulary_to_index[PADDING_TOKEN],

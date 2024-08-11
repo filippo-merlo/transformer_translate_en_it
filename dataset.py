@@ -102,7 +102,7 @@ elif TOKENIZATION_LEVEL == 'word':
     english_vocabulary = [START_TOKEN, ' ']
 
     from tqdm import tqdm 
-    TOTAL_SENTENCES = 300#200000
+    TOTAL_SENTENCES = 200000
     italian_words = []
     english_words = []
     english_sentences = []
@@ -115,9 +115,7 @@ elif TOKENIZATION_LEVEL == 'word':
         english_words += TOKENIZER(example['translation']['en'].lower())
     
     italian_vocabulary = italian_vocabulary + list(set(italian_words)) + [PADDING_TOKEN, END_TOKEN]
-    print(len(italian_vocabulary))
     english_vocabulary = english_vocabulary + list(set(english_words)) + [PADDING_TOKEN, END_TOKEN]
-    print(len(english_vocabulary))
 
     # Get index to character and character to index mappings
     it_index_to_vocabulary = {k:v for k,v in enumerate(italian_vocabulary)}
@@ -125,7 +123,7 @@ elif TOKENIZATION_LEVEL == 'word':
 
     it_vocabulary_to_index = {v:k for k,v in enumerate(italian_vocabulary)}
     en_vocabulary_to_index = {v:k for k,v in enumerate(english_vocabulary)}
-    print(en_vocabulary_to_index['should'])
+
 
     # set max sequence length and filter out sentences that are too long or have invalid tokens
     max_sequence_length = 200
