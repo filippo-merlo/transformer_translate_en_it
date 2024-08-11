@@ -10,8 +10,7 @@ import torch.nn.functional as F
 
 # Function to get the appropriate device (GPU if available, otherwise CPU)
 def get_device():
-    #return torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-    return torch.device('cpu')
+    return torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
 # Function implementing scaled dot-product attention
 def scaled_dot_product(q, k, v, mask=None):
