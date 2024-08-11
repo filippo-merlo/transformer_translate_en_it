@@ -134,7 +134,7 @@ elif TOKENIZATION_LEVEL == 'word':
 
     # Filter out sentences that are too long or have invalid tokens
     valid_sentence_indicies = []
-    for index in range(len(italian_sentences)):
+    for index in tqdm(range(len(italian_sentences))):
         italian_sentence, english_sentence = italian_sentences[index], english_sentences[index]
         if is_valid_length(italian_sentence, max_sequence_length) \
         and is_valid_length(english_sentence, max_sequence_length):
