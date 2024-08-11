@@ -185,6 +185,7 @@ for epoch in range(num_epochs):
                 print(f"Evaluation translation (should we go to the mall?) : {it_sentence}")
                 print("-------------------------------------------")
             except:
+                print('error')
                 print(it_sentence)
             
 import os
