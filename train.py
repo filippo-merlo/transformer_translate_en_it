@@ -76,7 +76,7 @@ optim = torch.optim.Adam(transformer.parameters(), lr=1e-4)
 # A large negative constant used to represent negative infinity in mask calculations.
 NEG_INFTY = -1e9
 
-def create_masks(eng_batch, it_batch):
+def create_masks(eng_batch, it_batch, tokenizer = None):
     # Determine the number of sentences in the batch.
     num_sentences = len(eng_batch)
     
@@ -92,7 +92,10 @@ def create_masks(eng_batch, it_batch):
     # Iterate over each sentence in the batch
     for idx in range(num_sentences):
         # Get the length of the English and Italian sentences
-        eng_sentence_length, it_sentence_length = len(eng_batch[idx]), len(it_batch[idx])
+        if tokenizer:
+            eng_sentence_length, it_sentence_length = len(tokenizer(eng_batch[idx])), len(tokenizer(it_batch[idx]))
+        else:
+            eng_sentence_length, it_sentence_length = len(eng_batch[idx]), len(it_batch[idx])
         
         # Identify the positions in the sequence that should be masked (i.e., padding positions)
         eng_chars_to_padding_mask = np.arange(eng_sentence_length + 1, max_sequence_length)
@@ -130,7 +133,7 @@ for epoch in range(num_epochs):
     for batch_num, batch in enumerate(iterator):
         transformer.train()
         eng_batch, it_batch = batch
-        encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask = create_masks(eng_batch, it_batch)
+        encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask = create_masks(eng_batch, it_batch, word_tokenize)
         optim.zero_grad()
         it_predictions = transformer(eng_batch,
                                      it_batch,
