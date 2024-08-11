@@ -191,3 +191,6 @@ for epoch in range(num_epochs):
 import os
 model_save_path = os.path.join(MODEL_PATH,f"transformer_model_{TOKENIZATION_LEVEL}_level_tok.pth")
 torch.save(transformer.state_dict(), model_save_path)
+
+
+#%%
