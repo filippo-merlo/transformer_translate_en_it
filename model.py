@@ -333,18 +333,18 @@ class Transformer(nn.Module):
                 drop_prob, 
                 num_layers,
                 max_sequence_length, 
-                kn_vocab_size,
-                english_to_index,
-                kannada_to_index,
+                second_l_vocab_size,
+                from_lang_to_index,
+                to_lang_to_index,
                 START_TOKEN, 
                 END_TOKEN, 
                 PADDING_TOKEN
                 ):
         super().__init__()
         # Initialize the encoder, decoder, and final linear layer
-        self.encoder = Encoder(d_model, ffn_hidden, num_heads, drop_prob, num_layers, max_sequence_length, english_to_index, START_TOKEN, END_TOKEN, PADDING_TOKEN)
-        self.decoder = Decoder(d_model, ffn_hidden, num_heads, drop_prob, num_layers, max_sequence_length, kannada_to_index, START_TOKEN, END_TOKEN, PADDING_TOKEN)
-        self.linear = nn.Linear(d_model, kn_vocab_size)
+        self.encoder = Encoder(d_model, ffn_hidden, num_heads, drop_prob, num_layers, max_sequence_length, from_lang_to_index, START_TOKEN, END_TOKEN, PADDING_TOKEN)
+        self.decoder = Decoder(d_model, ffn_hidden, num_heads, drop_prob, num_layers, max_sequence_length, to_lang_to_index, START_TOKEN, END_TOKEN, PADDING_TOKEN)
+        self.linear = nn.Linear(d_model, second_l_vocab_size)
         self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
     # Forward method to perform the entire encoding and decoding process

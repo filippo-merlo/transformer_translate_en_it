@@ -42,8 +42,8 @@ transformer = Transformer(d_model,
                           num_layers, 
                           max_sequence_length,
                           it_vocab_size,
-                          vocabulary_to_index,
-                          vocabulary_to_index,
+                          en_vocabulary_to_index,
+                          it_vocabulary_to_index,
                           START_TOKEN, 
                           END_TOKEN, 
                           PADDING_TOKEN)
@@ -62,7 +62,7 @@ for batch_num, batch in enumerate(iterator):
 #%%
 from torch import nn
 
-criterion = nn.CrossEntropyLoss(ignore_index=vocabulary_to_index[PADDING_TOKEN],
+criterion = nn.CrossEntropyLoss(ignore_index=it_vocabulary_to_index[PADDING_TOKEN],
                                 reduction='none')
 
 # When computing the loss, we are ignoring cases when the label is the padding token
@@ -118,7 +118,6 @@ def create_masks(eng_batch, it_batch):
     return encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask
 
 
-
 transformer.train()
 transformer.to(device)
 total_loss = 0
@@ -146,7 +145,7 @@ for epoch in range(num_epochs):
             it_predictions.view(-1, it_vocab_size).to(device),
             labels.view(-1).to(device)
         ).to(device)
-        valid_indicies = torch.where(labels.view(-1) == vocabulary_to_index[PADDING_TOKEN], False, True)
+        valid_indicies = torch.where(labels.view(-1) == it_vocabulary_to_index[PADDING_TOKEN], False, True)
         loss = loss.sum() / valid_indicies.sum()
         loss.backward()
         optim.step()
@@ -158,9 +157,9 @@ for epoch in range(num_epochs):
             it_sentence_predicted = torch.argmax(it_predictions[0], axis=1)
             predicted_sentence = ""
             for idx in it_sentence_predicted:
-              if idx == vocabulary_to_index[END_TOKEN]:
+              if idx == it_vocabulary_to_index[END_TOKEN]:
                 break
-              predicted_sentence += index_to_vocabulary[idx.item()]
+              predicted_sentence += it_index_to_vocabulary[idx.item()]
             print(f"Italian Prediction: {predicted_sentence}")
 
             transformer.eval()
@@ -179,7 +178,7 @@ for epoch in range(num_epochs):
                                           dec_end_token=False)
                 next_token_prob_distribution = predictions[0][word_counter] # not actual probs
                 next_token_index = torch.argmax(next_token_prob_distribution).item()
-                next_token = index_to_vocabulary[next_token_index]
+                next_token = it_index_to_vocabulary[next_token_index]
                 it_sentence = (it_sentence[0] + next_token, )
                 if next_token == END_TOKEN:
                   break
@@ -190,3 +189,5 @@ for epoch in range(num_epochs):
 import os
 model_save_path = os.path.join(MODEL_PATH,"transformer_model_character_level_tok.pth")
 torch.save(transformer.state_dict(), model_save_path)
+
+
