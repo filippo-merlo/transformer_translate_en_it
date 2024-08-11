@@ -119,9 +119,6 @@ def create_masks(eng_batch, it_batch, tokenizer = None):
     decoder_self_attention_mask = torch.where(look_ahead_mask + decoder_padding_mask_self_attention, NEG_INFTY, 0)
     decoder_cross_attention_mask = torch.where(decoder_padding_mask_cross_attention, NEG_INFTY, 0)
     
-    print(encoder_self_attention_mask.shape)
-    print(decoder_self_attention_mask.shape)
-    print(decoder_cross_attention_mask.shape)
     # Return the computed attention masks for the encoder and decoder
     return encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask
 

@@ -100,9 +100,7 @@ class SentenceEmbedding(nn.Module):
     # Forward method to compute sentence embeddings
     def forward(self, x, start_token, end_token): # sentence
         x = self.batch_tokenize(x, start_token, end_token)
-        print(x.shape)
         x = self.embedding(x)
-        print(x.shape)
         pos = self.position_encoder().to(get_device())
         x = self.dropout(x + pos)
         return x
