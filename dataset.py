@@ -97,7 +97,26 @@ elif TOKENIZATION_LEVEL == 'word':
     from nltk.tokenize import word_tokenize
     nltk.download('punkt_tab')
 
-    TOKENIZER = word_tokenize
+    def custom_tokenizer(sentence):
+        punctuation = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', '–', '—',
+                    ':', '<', '=', '>', '?', '@', ';', 
+                    '[', '\\', ']', '^', '_', '`', '‘', '’', '“', '”', '…', '«', '»',
+                    '{', '|', '}', '~']
+
+        token_list = word_tokenize(sentence)
+        spaced_token_list = []
+
+        for i, token in enumerate(token_list):
+            if token in punctuation:
+                spaced_token_list.append(token)
+            else:
+                if i > 0:
+                    spaced_token_list.append(' ')
+                spaced_token_list.append(token)
+        return spaced_token_list
+
+
+    TOKENIZER = custom_tokenizer
     italian_vocabulary = [START_TOKEN, ' ']
     english_vocabulary = [START_TOKEN, ' ']
 
@@ -161,3 +180,4 @@ class TextDataset(Dataset):
         return self.english_sentences[idx], self.italian_sentences[idx]
     
 dataset = TextDataset(english_sentences, italian_sentences)
+
