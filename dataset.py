@@ -103,7 +103,7 @@ elif TOKENIZATION_LEVEL == 'word':
         spaced_token_list = list(itertools.chain(*list(itertools.chain(*ll))))
         return spaced_token_list
 
-    TOKENIZER = custom_tokenizer
+    TOKENIZER = word_tokenize
     italian_vocabulary = [START_TOKEN, ' ']
     english_vocabulary = [START_TOKEN, ' ']
 
