@@ -100,7 +100,7 @@ elif TOKENIZATION_LEVEL == 'word':
     english_vocabulary = [START_TOKEN]
 
     from tqdm import tqdm 
-    TOTAL_SENTENCES = 3000#200000
+    TOTAL_SENTENCES = 1000#200000
     italian_words = []
     english_words = []
     english_sentences = []

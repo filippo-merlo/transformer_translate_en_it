@@ -24,9 +24,6 @@ else:
 print(torch.cuda.is_available())
 device = torch.device("cuda")
 
-import os
-os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
-
 import torch
 
 d_model = 512
