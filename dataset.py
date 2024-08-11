@@ -93,6 +93,7 @@ if TOKENIZATION_LEVEL == 'char':
 elif TOKENIZATION_LEVEL == 'word':
     import nltk 
     from nltk.tokenize import word_tokenize
+    nltk.download('punkt_tab')
 
     italian_vocabulary = [START_TOKEN]
     english_vocabulary = [START_TOKEN]
