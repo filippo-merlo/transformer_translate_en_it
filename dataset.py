@@ -165,6 +165,7 @@ elif TOKENIZATION_LEVEL == 'word':
     italian_sentences = [italian_sentences[i] for i in valid_sentence_indicies]
     english_sentences = [english_sentences[i] for i in valid_sentence_indicies]
 
+#gg
 #%%
 from torch.utils.data import Dataset, DataLoader
 class TextDataset(Dataset):
