@@ -367,7 +367,7 @@ class Transformer(nn.Module):
                 dec_end_token=False): # x, y are batch of sentences
         
         # Encode the input sequence
-        print(x.shape)
+        print(x)
         print(encoder_self_attention_mask.shape)
         x = self.encoder(x, encoder_self_attention_mask, start_token=enc_start_token, end_token=enc_end_token)
         
