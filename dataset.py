@@ -99,7 +99,7 @@ elif TOKENIZATION_LEVEL == 'word':
     english_vocabulary = [START_TOKEN]
 
     from tqdm import tqdm 
-    TOTAL_SENTENCES = 10#200000
+    TOTAL_SENTENCES = 3000#200000
     italian_words = []
     english_words = []
     english_sentences = []
@@ -108,8 +108,8 @@ elif TOKENIZATION_LEVEL == 'word':
         example = next(dataset_iter)
         italian_sentences.append(example['translation']['it'].lower())
         english_sentences.append(example['translation']['en'].lower())
-        italian_words.append(word_tokenize(example['translation']['it'].lower()))
-        english_words.append(word_tokenize(example['translation']['en'].lower()))
+        italian_words += word_tokenize(example['translation']['it'].lower())
+        english_words += word_tokenize(example['translation']['en'].lower())
     
     italian_vocabulary = italian_vocabulary + list(set(italian_words)) + [PADDING_TOKEN + END_TOKEN]
     english_vocabulary = italian_vocabulary + list(set(english_words)) + [PADDING_TOKEN + END_TOKEN]
