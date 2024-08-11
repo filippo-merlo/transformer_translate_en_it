@@ -98,30 +98,10 @@ elif TOKENIZATION_LEVEL == 'word':
     nltk.download('punkt_tab')
     import itertools
 
-    def custom_tokenizerr(sentence):
+    def custom_tokenizer(sentence):
         ll = [[word_tokenize(w), ' '] for w in sentence.split()]
         spaced_token_list = list(itertools.chain(*list(itertools.chain(*ll))))[:-1]
         return spaced_token_list
-    
-    def custom_tokenizer(sentence):
-        # Split the sentence into words
-        words = sentence.split()
-        
-        # Create a list to store tokens and spaces
-        spaced_tokens = []
-        
-        for word in words:
-            # Tokenize each word
-            tokens = word_tokenize(word)
-            
-            # Add the tokens to the spaced_tokens list
-            spaced_tokens.extend(tokens)
-            
-            # Add a space if the word is not the last one
-            if word != words[-1]:
-                spaced_tokens.append(' ')
-        
-        return spaced_tokens
 
     TOKENIZER = custom_tokenizer
     italian_vocabulary = [START_TOKEN]
