@@ -39,7 +39,7 @@ if TOKENIZATION_LEVEL == 'char':
 
     # Get subset of sentences from dataset: 200000
     from tqdm import tqdm 
-    TOTAL_SENTENCES = 100 #200000
+    TOTAL_SENTENCES = 200000
     scores = []
     english_sentences = []
     italian_sentences = []
@@ -102,7 +102,7 @@ elif TOKENIZATION_LEVEL == 'word':
     english_vocabulary = [START_TOKEN, ' ']
 
     from tqdm import tqdm 
-    TOTAL_SENTENCES = 200000
+    TOTAL_SENTENCES = 100 #200000
     italian_words = []
     english_words = []
     english_sentences = []
