@@ -14,6 +14,7 @@ PADDING_TOKEN = '<PADDING>'
 END_TOKEN = '<END>'
 
 TOKENIZATION_LEVEL = 'word'
+
 if TOKENIZATION_LEVEL == 'char':
     vocabulary = [
         START_TOKEN, ' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', '–','—',
