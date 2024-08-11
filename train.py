@@ -158,6 +158,7 @@ def create_masks(eng_batch, it_batch, tokenizer=None):
     
     print(encoder_self_attention_mask.shape)
     print(decoder_self_attention_mask.shape)
+    print(decoder_cross_attention_mask.shape)
     # Return the computed attention masks for the encoder and decoder
     return encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask
 
