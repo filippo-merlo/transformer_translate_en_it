@@ -134,7 +134,7 @@ elif TOKENIZATION_LEVEL == 'word':
     
     # All tokens in the sentence are in the vocabulary
     def is_valid_tokens(sentence, vocab):
-        for token in list(set(word_tokenize(sentence))):
+        for token in list(set(TOKENIZER(sentence))):
             if token not in vocab:
                 return False
         return True
