@@ -115,7 +115,7 @@ elif TOKENIZATION_LEVEL == 'word':
         english_words += TOKENIZER(example['translation']['en'].lower())
     
     italian_vocabulary = italian_vocabulary + list(set(italian_words)) + [PADDING_TOKEN, END_TOKEN]
-    english_vocabulary = italian_vocabulary + list(set(english_words)) + [PADDING_TOKEN, END_TOKEN]
+    english_vocabulary = english_vocabulary + list(set(english_words)) + [PADDING_TOKEN, END_TOKEN]
 
     # Get index to character and character to index mappings
     it_index_to_vocabulary = {k:v for k,v in enumerate(italian_vocabulary)}
