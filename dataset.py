@@ -101,20 +101,14 @@ elif TOKENIZATION_LEVEL == 'word':
     def custom_tokenizer(sentence):
         ll = [[word_tokenize(w), ' '] for w in sentence.split()]
         spaced_token_list = list(itertools.chain(*list(itertools.chain(*ll))))[:-1]
-        print(spaced_token_list)
         return spaced_token_list
-    
-    def normal_tokenizer(sentence):
-        tok = word_tokenize(sentence)
-        print(tok)
-        return tok
 
     TOKENIZER = custom_tokenizer
     italian_vocabulary = [START_TOKEN]
     english_vocabulary = [START_TOKEN]
 
     from tqdm import tqdm 
-    TOTAL_SENTENCES = 120#200000
+    TOTAL_SENTENCES = 200000
     italian_words = []
     english_words = []
     english_sentences = []

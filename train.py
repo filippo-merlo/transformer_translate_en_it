@@ -23,8 +23,7 @@ else:
 '''
 
 print(torch.cuda.is_available())
-#device = torch.device("cuda")
-device = torch.device("cpu")
+device = torch.device("cuda")
 
 import torch
 
