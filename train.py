@@ -178,9 +178,7 @@ for epoch in range(num_epochs):
                     next_token_prob_distribution = predictions[0][word_counter] # not actual probs
                     next_token_index = torch.argmax(next_token_prob_distribution).item()
                     next_token = it_index_to_vocabulary[next_token_index]
-                    if next_token_index not in italian_vocabulary:
-                        next_token = next_token + ' '
-                    it_sentence = (it_sentence[0] + next_token, )
+                    it_sentence = (it_sentence[0] + ' ' + next_token, )
                     if next_token == END_TOKEN:
                         break
 
@@ -189,7 +187,6 @@ for epoch in range(num_epochs):
             except:
                 print(it_sentence)
             
-
 import os
 model_save_path = os.path.join(MODEL_PATH,f"transformer_model_{TOKENIZATION_LEVEL}_level_tok.pth")
 torch.save(transformer.state_dict(), model_save_path)
