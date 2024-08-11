@@ -76,6 +76,7 @@ optim = torch.optim.Adam(transformer.parameters(), lr=1e-4)
 # A large negative constant used to represent negative infinity in mask calculations.
 NEG_INFTY = -1e9
 
+'''
 def create_masks(eng_batch, it_batch, tokenizer = None):
     # Determine the number of sentences in the batch.
     num_sentences = len(eng_batch)
@@ -117,6 +118,43 @@ def create_masks(eng_batch, it_batch, tokenizer = None):
     encoder_self_attention_mask = torch.where(encoder_padding_mask, NEG_INFTY, 0)
     decoder_self_attention_mask = torch.where(look_ahead_mask + decoder_padding_mask_self_attention, NEG_INFTY, 0)
     decoder_cross_attention_mask = torch.where(decoder_padding_mask_cross_attention, NEG_INFTY, 0)
+    
+    # Return the computed attention masks for the encoder and decoder
+    return encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask
+'''
+
+import torch
+
+def create_masks(eng_batch, it_batch, tokenizer=None):
+    # Determine the number of sentences in the batch.
+    num_sentences = len(eng_batch)
+    
+    # Create a look-ahead mask for the decoder to prevent it from attending to future tokens.
+    look_ahead_mask = torch.triu(torch.ones((max_sequence_length, max_sequence_length), dtype=torch.bool), diagonal=1)  # Mask upper triangle (excluding diagonal)
+    
+    # Initialize padding masks for the encoder and decoder with False (no masking)
+    encoder_padding_mask = torch.zeros((num_sentences, max_sequence_length), dtype=torch.bool)
+    decoder_padding_mask = torch.zeros((num_sentences, max_sequence_length), dtype=torch.bool)
+
+    # Iterate over each sentence in the batch
+    for idx in range(num_sentences):
+        # Get the length of the English and Italian sentences
+        if tokenizer:
+            eng_sentence_length = len(tokenizer(eng_batch[idx]))
+            it_sentence_length = len(tokenizer(it_batch[idx]))
+        else:
+            eng_sentence_length = len(eng_batch[idx])
+            it_sentence_length = len(it_batch[idx])
+        
+        # Identify padding positions
+        encoder_padding_mask[idx, eng_sentence_length:] = True
+        decoder_padding_mask[idx, it_sentence_length:] = True
+
+    # Convert padding masks into attention masks using a large negative value (e.g., -1e9)
+    NEG_INFTY = -1e9
+    encoder_self_attention_mask = encoder_padding_mask.unsqueeze(1).unsqueeze(2).float() * NEG_INFTY
+    decoder_self_attention_mask = (look_ahead_mask + decoder_padding_mask.unsqueeze(1).unsqueeze(2).float()) * NEG_INFTY
+    decoder_cross_attention_mask = encoder_padding_mask.unsqueeze(1).unsqueeze(2).float() * NEG_INFTY
     
     # Return the computed attention masks for the encoder and decoder
     return encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask
