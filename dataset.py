@@ -110,8 +110,8 @@ elif TOKENIZATION_LEVEL == 'word':
         return tok
 
     TOKENIZER = custom_tokenizer
-    italian_vocabulary = [START_TOKEN, ' ']
-    english_vocabulary = [START_TOKEN, ' ']
+    italian_vocabulary = [START_TOKEN, ' ', '']
+    english_vocabulary = [START_TOKEN, ' ', '']
 
     from tqdm import tqdm 
     TOTAL_SENTENCES = 120#200000
