@@ -7,6 +7,25 @@ import torch.optim as optim
 from dataset import *
 from config import *
 
+import torch
+import random
+import numpy as np
+
+# For CPU
+torch.manual_seed(42)
+
+# For GPU (if you have CUDA)
+torch.cuda.manual_seed(42)
+torch.cuda.manual_seed_all(42)  # if you are using multiple GPUs
+
+# Ensure deterministic behavior
+torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
+
+# For reproducibility across different devices
+np.random.seed(42)
+random.seed(42)
+
 '''
 # Check if a GPU is available and use it
 if torch.cuda.is_available():
