@@ -102,6 +102,7 @@ class SentenceEmbedding(nn.Module):
         x = self.batch_tokenize(x, start_token, end_token)
         x = self.embedding(x)
         pos = self.position_encoder().to(get_device())
+        print(pos)
         x = self.dropout(x + pos)
         return x
 
