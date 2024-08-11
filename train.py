@@ -187,7 +187,7 @@ for epoch in range(num_epochs):
             print("-------------------------------------------")
 
 import os
-model_save_path = os.path.join(MODEL_PATH,"transformer_model_character_level_tok.pth")
+model_save_path = os.path.join(MODEL_PATH,"transformer_model_word_level_tok.pth")
 torch.save(transformer.state_dict(), model_save_path)
 
 
