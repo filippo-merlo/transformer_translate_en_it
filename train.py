@@ -33,7 +33,7 @@ num_heads = 8
 drop_prob = 0.1
 num_layers = 1
 max_sequence_length = 200
-it_vocab_size = len(vocabulary)
+it_vocab_size = len(italian_vocabulary)
 
 transformer = Transformer(d_model, 
                           ffn_hidden,
