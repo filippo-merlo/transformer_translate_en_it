@@ -109,6 +109,8 @@ elif TOKENIZATION_LEVEL == 'word':
     italian_sentences = []
     for _ in tqdm(range(TOTAL_SENTENCES)):
         example = next(dataset_iter)
+        if ('should' in example['translation']['en'].lower()):
+            print(example)
         italian_sentences.append(example['translation']['it'].lower())
         english_sentences.append(example['translation']['en'].lower())
         italian_words += TOKENIZER(example['translation']['it'].lower())
