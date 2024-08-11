@@ -109,7 +109,7 @@ elif TOKENIZATION_LEVEL == 'word':
         print(tok)
         return tok
 
-    TOKENIZER = normal_tokenizer
+    TOKENIZER = custom_tokenizer
     italian_vocabulary = [START_TOKEN, ' ']
     english_vocabulary = [START_TOKEN, ' ']
 
