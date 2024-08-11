@@ -76,9 +76,14 @@ class SentenceEmbedding(nn.Module):
         def tokenize(sentence, start_token, end_token):
             # Convert each sentence into a list of token indices
             if self.tokenizer:
-                for token in self.tokenizer(sentence):
-                    print(token)
-                sentence_word_indicies = [self.language_to_index[token] for token in self.tokenizer(sentence)]
+                try:
+                    sentence_word_indicies = [self.language_to_index[token] for token in self.tokenizer(sentence)]
+                except:
+                    for token in self.tokenizer(sentence):
+                        print(token)
+                    from pprint import pprint 
+                    pprint(self.language_to_index)
+
             else:
                 sentence_word_indicies = [self.language_to_index[token] for token in list(sentence)]
             # Add start and end tokens if specified
