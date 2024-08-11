@@ -16,6 +16,7 @@ END_TOKEN = '<END>'
 TOKENIZATION_LEVEL = 'char'
 
 if TOKENIZATION_LEVEL == 'char':
+    word_tokenize = None
     italian_vocabulary = [
         START_TOKEN, ' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', '–','—',
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
