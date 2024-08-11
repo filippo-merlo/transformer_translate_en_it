@@ -100,7 +100,7 @@ elif TOKENIZATION_LEVEL == 'word':
 
     def custom_tokenizer(sentence):
         ll = [[word_tokenize(w), ' '] for w in sentence.split()]
-        spaced_token_list = list(itertools.chain(*list(itertools.chain(*ll))))
+        spaced_token_list = list(itertools.chain(*list(itertools.chain(*ll))))[:-1]
         print(spaced_token_list)
         return spaced_token_list
 
@@ -168,3 +168,4 @@ class TextDataset(Dataset):
         return self.english_sentences[idx], self.italian_sentences[idx]
     
 dataset = TextDataset(english_sentences, italian_sentences)
+
