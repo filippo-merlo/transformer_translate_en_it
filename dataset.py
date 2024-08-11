@@ -98,8 +98,8 @@ elif TOKENIZATION_LEVEL == 'word':
     nltk.download('punkt_tab')
 
     TOKENIZER = word_tokenize
-    italian_vocabulary = [START_TOKEN]
-    english_vocabulary = [START_TOKEN]
+    italian_vocabulary = [START_TOKEN, ' ']
+    english_vocabulary = [START_TOKEN, ' ']
 
     from tqdm import tqdm 
     TOTAL_SENTENCES = 300#200000
