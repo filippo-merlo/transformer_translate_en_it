@@ -101,6 +101,7 @@ elif TOKENIZATION_LEVEL == 'word':
     def custom_tokenizer(sentence):
         ll = [[word_tokenize(w), ' '] for w in sentence.split()]
         spaced_token_list = list(itertools.chain(*list(itertools.chain(*ll))))
+        print(spaced_token_list)
         return spaced_token_list
 
     TOKENIZER = custom_tokenizer
