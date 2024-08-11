@@ -7,25 +7,6 @@ import torch.optim as optim
 from dataset import *
 from config import *
 
-import torch
-import random
-import numpy as np
-
-# For CPU
-torch.manual_seed(42)
-
-# For GPU (if you have CUDA)
-torch.cuda.manual_seed(42)
-torch.cuda.manual_seed_all(42)  # if you are using multiple GPUs
-
-# Ensure deterministic behavior
-torch.backends.cudnn.deterministic = True
-torch.backends.cudnn.benchmark = False
-
-# For reproducibility across different devices
-np.random.seed(42)
-random.seed(42)
-
 '''
 # Check if a GPU is available and use it
 if torch.cuda.is_available():
@@ -43,7 +24,6 @@ else:
 print(torch.cuda.is_available())
 #device = torch.device("cuda")
 device = torch.device("cpu")
-
 
 import torch
 
@@ -184,7 +164,7 @@ for epoch in range(num_epochs):
                 print(f"Italian Prediction: {predicted_sentence}")
                 transformer.eval()
                 it_sentence = ("",)
-                eng_sentence = (" ",)
+                eng_sentence = ("and we (angels) descend not except by the command of your lord (o muhammad saw).",)
                 for word_counter in range(max_sequence_length):
                     encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask= create_masks(eng_sentence, it_sentence)
                     predictions = transformer(eng_sentence,

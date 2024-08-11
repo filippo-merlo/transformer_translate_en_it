@@ -150,6 +150,7 @@ elif TOKENIZATION_LEVEL == 'word':
         italian_sentence, english_sentence = italian_sentences[index], english_sentences[index]
         if is_valid_length(italian_sentence, max_sequence_length) \
         and is_valid_length(english_sentence, max_sequence_length):
+            
             valid_sentence_indicies.append(index)
 
     print(f"Number of sentences: {len(italian_sentences)}")
