@@ -24,9 +24,6 @@ else:
 print(torch.cuda.is_available())
 device = torch.device("cuda")
 
-import os
-os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
-
 import torch
 
 d_model = 512
@@ -50,7 +47,7 @@ transformer = Transformer(d_model,
                           START_TOKEN, 
                           END_TOKEN, 
                           PADDING_TOKEN,
-                          word_tokenize)
+                          TOKENIZER)
 #%%
 transformer
 #%%
@@ -136,7 +133,7 @@ for epoch in range(num_epochs):
     for batch_num, batch in enumerate(iterator):
         transformer.train()
         eng_batch, it_batch = batch
-        encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask = create_masks(eng_batch, it_batch, word_tokenize)
+        encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask = create_masks(eng_batch, it_batch, TOKENIZER)
         optim.zero_grad()
         it_predictions = transformer(eng_batch,
                                      it_batch,
@@ -194,7 +191,7 @@ for epoch in range(num_epochs):
             print("-------------------------------------------")
 
 import os
-model_save_path = os.path.join(MODEL_PATH,"transformer_model_word_level_tok.pth")
+model_save_path = os.path.join(MODEL_PATH,f"transformer_model_{TOKENIZATION_LEVEL}_level_tok.pth")
 torch.save(transformer.state_dict(), model_save_path)
 
 

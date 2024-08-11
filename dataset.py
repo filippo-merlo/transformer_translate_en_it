@@ -13,10 +13,10 @@ START_TOKEN = '<START>'
 PADDING_TOKEN = '<PADDING>'
 END_TOKEN = '<END>'
 
-TOKENIZATION_LEVEL = 'char'
+TOKENIZATION_LEVEL = 'word'
 
 if TOKENIZATION_LEVEL == 'char':
-    word_tokenize = None
+    TOKENIZER = None
     italian_vocabulary = [
         START_TOKEN, ' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', '–','—',
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
@@ -97,6 +97,7 @@ elif TOKENIZATION_LEVEL == 'word':
     from nltk.tokenize import word_tokenize
     nltk.download('punkt_tab')
 
+    TOKENIZER = word_tokenize
     italian_vocabulary = [START_TOKEN]
     english_vocabulary = [START_TOKEN]
 
@@ -110,8 +111,8 @@ elif TOKENIZATION_LEVEL == 'word':
         example = next(dataset_iter)
         italian_sentences.append(example['translation']['it'].lower())
         english_sentences.append(example['translation']['en'].lower())
-        italian_words += word_tokenize(example['translation']['it'].lower())
-        english_words += word_tokenize(example['translation']['en'].lower())
+        italian_words += TOKENIZER(example['translation']['it'].lower())
+        english_words += TOKENIZER(example['translation']['en'].lower())
     
     italian_vocabulary = italian_vocabulary + list(set(italian_words)) + [PADDING_TOKEN, END_TOKEN]
     english_vocabulary = italian_vocabulary + list(set(english_words)) + [PADDING_TOKEN, END_TOKEN]
