@@ -57,7 +57,7 @@ class PositionalEncoding(nn.Module):
 # Class to create sentence embeddings for input sentences
 class SentenceEmbedding(nn.Module):
     "For a given sentence, create an embedding"
-    def __init__(self, max_sequence_length, d_model, language_to_index, START_TOKEN, END_TOKEN, PADDING_TOKEN):
+    def __init__(self, max_sequence_length, d_model, language_to_index, START_TOKEN, END_TOKEN, PADDING_TOKEN, tokenizer = None):
         super().__init__()
         self.vocab_size = len(language_to_index)
         self.max_sequence_length = max_sequence_length
@@ -68,12 +68,16 @@ class SentenceEmbedding(nn.Module):
         self.START_TOKEN = START_TOKEN
         self.END_TOKEN = END_TOKEN
         self.PADDING_TOKEN = PADDING_TOKEN
+        self.tokenizer = tokenizer
     
     # Function to tokenize and encode a batch of sentences
     def batch_tokenize(self, batch, start_token, end_token):
         def tokenize(sentence, start_token, end_token):
             # Convert each sentence into a list of token indices
-            sentence_word_indicies = [self.language_to_index[token] for token in list(sentence)]
+            if self.tokenizer:
+                sentence_word_indicies = [self.language_to_index[token] for token in self.tokenizer(sentence)]
+            else:
+                sentence_word_indicies = [self.language_to_index[token] for token in list(sentence)]
             # Add start and end tokens if specified
             if start_token:
                 sentence_word_indicies.insert(0, self.language_to_index[self.START_TOKEN])
@@ -212,10 +216,11 @@ class Encoder(nn.Module):
                  language_to_index,
                  START_TOKEN,
                  END_TOKEN, 
-                 PADDING_TOKEN):
+                 PADDING_TOKEN,
+                 tokenizer = None):
         super().__init__()
         # Initialize the sentence embedding and encoder layers
-        self.sentence_embedding = SentenceEmbedding(max_sequence_length, d_model, language_to_index, START_TOKEN, END_TOKEN, PADDING_TOKEN)
+        self.sentence_embedding = SentenceEmbedding(max_sequence_length, d_model, language_to_index, START_TOKEN, END_TOKEN, PADDING_TOKEN, tokenizer)
         self.layers = SequentialEncoder(*[EncoderLayer(d_model, ffn_hidden, num_heads, drop_prob)
                                       for _ in range(num_layers)])
 
@@ -312,10 +317,11 @@ class Decoder(nn.Module):
                  language_to_index,
                  START_TOKEN,
                  END_TOKEN, 
-                 PADDING_TOKEN):
+                 PADDING_TOKEN,
+                 tokenizer = None):
         super().__init__()
         # Initialize the sentence embedding and decoder layers
-        self.sentence_embedding = SentenceEmbedding(max_sequence_length, d_model, language_to_index, START_TOKEN, END_TOKEN, PADDING_TOKEN)
+        self.sentence_embedding = SentenceEmbedding(max_sequence_length, d_model, language_to_index, START_TOKEN, END_TOKEN, PADDING_TOKEN, tokenizer)
         self.layers = SequentialDecoder(*[DecoderLayer(d_model, ffn_hidden, num_heads, drop_prob) for _ in range(num_layers)])
 
     def forward(self, x, y, self_attention_mask, cross_attention_mask, start_token, end_token):
@@ -338,12 +344,13 @@ class Transformer(nn.Module):
                 to_lang_to_index,
                 START_TOKEN, 
                 END_TOKEN, 
-                PADDING_TOKEN
+                PADDING_TOKEN,
+                tokenizer
                 ):
         super().__init__()
         # Initialize the encoder, decoder, and final linear layer
-        self.encoder = Encoder(d_model, ffn_hidden, num_heads, drop_prob, num_layers, max_sequence_length, from_lang_to_index, START_TOKEN, END_TOKEN, PADDING_TOKEN)
-        self.decoder = Decoder(d_model, ffn_hidden, num_heads, drop_prob, num_layers, max_sequence_length, to_lang_to_index, START_TOKEN, END_TOKEN, PADDING_TOKEN)
+        self.encoder = Encoder(d_model, ffn_hidden, num_heads, drop_prob, num_layers, max_sequence_length, from_lang_to_index, START_TOKEN, END_TOKEN, PADDING_TOKEN, tokenizer)
+        self.decoder = Decoder(d_model, ffn_hidden, num_heads, drop_prob, num_layers, max_sequence_length, to_lang_to_index, START_TOKEN, END_TOKEN, PADDING_TOKEN, tokenizer)
         self.linear = nn.Linear(d_model, second_l_vocab_size)
         self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 

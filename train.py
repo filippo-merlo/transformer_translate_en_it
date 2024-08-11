@@ -46,7 +46,8 @@ transformer = Transformer(d_model,
                           it_vocabulary_to_index,
                           START_TOKEN, 
                           END_TOKEN, 
-                          PADDING_TOKEN)
+                          PADDING_TOKEN,
+                          word_tokenize)
 #%%
 transformer
 #%%
