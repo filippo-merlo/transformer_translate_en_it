@@ -149,40 +149,44 @@ for epoch in range(num_epochs):
         optim.step()
         #train_losses.append(loss.item())
         if batch_num % 100 == 0:
-            print(f"Iteration {batch_num} : {loss.item()}")
-            print(f"English: {eng_batch[0]}")
-            print(f"Italian Translation: {it_batch[0]}")
-            it_sentence_predicted = torch.argmax(it_predictions[0], axis=1)
-            predicted_sentence = ""
-            for idx in it_sentence_predicted:
-              if idx == it_vocabulary_to_index[END_TOKEN]:
-                break
-              predicted_sentence += it_index_to_vocabulary[idx.item()]
-            print(f"Italian Prediction: {predicted_sentence}")
+            try:
+                print(f"Iteration {batch_num} : {loss.item()}")
+                print(f"English: {eng_batch[0]}")
+                print(f"Italian Translation: {it_batch[0]}")
+                it_sentence_predicted = torch.argmax(it_predictions[0], axis=1)
+                predicted_sentence = ""
+                for idx in it_sentence_predicted:
+                    if idx == it_vocabulary_to_index[END_TOKEN]:
+                        break
+                    predicted_sentence += it_index_to_vocabulary[idx.item()]
+                
+                print(f"Italian Prediction: {predicted_sentence}")
+                transformer.eval()
+                it_sentence = ("",)
+                eng_sentence = ("and we (angels) descend not except by the command of your lord (o muhammad saw).",)
+                for word_counter in range(max_sequence_length):
+                    encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask= create_masks(eng_sentence, it_sentence)
+                    predictions = transformer(eng_sentence,
+                                            it_sentence,
+                                            encoder_self_attention_mask.to(device), 
+                                            decoder_self_attention_mask.to(device), 
+                                            decoder_cross_attention_mask.to(device),
+                                            enc_start_token=False,
+                                            enc_end_token=False,
+                                            dec_start_token=True,
+                                            dec_end_token=False)
+                    next_token_prob_distribution = predictions[0][word_counter] # not actual probs
+                    next_token_index = torch.argmax(next_token_prob_distribution).item()
+                    next_token = it_index_to_vocabulary[next_token_index]
+                    it_sentence = (it_sentence[0] + next_token, )
+                    if next_token == END_TOKEN:
+                        break
 
-            transformer.eval()
-            it_sentence = ("",)
-            eng_sentence = ("and we (angels) descend not except by the command of your lord (o muhammad saw).",)
-            for word_counter in range(max_sequence_length):
-                encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask= create_masks(eng_sentence, it_sentence)
-                predictions = transformer(eng_sentence,
-                                          it_sentence,
-                                          encoder_self_attention_mask.to(device), 
-                                          decoder_self_attention_mask.to(device), 
-                                          decoder_cross_attention_mask.to(device),
-                                          enc_start_token=False,
-                                          enc_end_token=False,
-                                          dec_start_token=True,
-                                          dec_end_token=False)
-                next_token_prob_distribution = predictions[0][word_counter] # not actual probs
-                next_token_index = torch.argmax(next_token_prob_distribution).item()
-                next_token = it_index_to_vocabulary[next_token_index]
-                it_sentence = (it_sentence[0] + next_token, )
-                if next_token == END_TOKEN:
-                  break
+                print(f"Evaluation translation (should we go to the mall?) : {it_sentence}")
+                print("-------------------------------------------")
+            except:
+                print(it_sentence)
             
-            print(f"Evaluation translation (should we go to the mall?) : {it_sentence}")
-            print("-------------------------------------------")
 
 import os
 model_save_path = os.path.join(MODEL_PATH,f"transformer_model_{TOKENIZATION_LEVEL}_level_tok.pth")
