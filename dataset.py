@@ -123,6 +123,7 @@ elif TOKENIZATION_LEVEL == 'word':
 
     it_vocabulary_to_index = {v:k for k,v in enumerate(italian_vocabulary)}
     en_vocabulary_to_index = {v:k for k,v in enumerate(english_vocabulary)}
+    print(en_vocabulary_to_index['should'])
 
     # set max sequence length and filter out sentences that are too long or have invalid tokens
     max_sequence_length = 200
