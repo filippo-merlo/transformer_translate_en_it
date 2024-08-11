@@ -103,8 +103,13 @@ elif TOKENIZATION_LEVEL == 'word':
         spaced_token_list = list(itertools.chain(*list(itertools.chain(*ll))))[:-1]
         print(spaced_token_list)
         return spaced_token_list
+    
+    def normal_tokenizer(sentence):
+        tok = word_tokenize(sentence)
+        print(tok)
+        return tok
 
-    TOKENIZER = custom_tokenizer
+    TOKENIZER = normal_tokenizer
     italian_vocabulary = [START_TOKEN, ' ']
     english_vocabulary = [START_TOKEN, ' ']
 
