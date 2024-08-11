@@ -94,10 +94,10 @@ if TOKENIZATION_LEVEL == 'char':
 
 elif TOKENIZATION_LEVEL == 'word':
     import nltk 
-    from nltk.tokenize import wordpunct_tokenize
+    from nltk.tokenize import word_tokenize
     nltk.download('punkt_tab')
 
-    TOKENIZER = wordpunct_tokenize
+    TOKENIZER = word_tokenize
     italian_vocabulary = [START_TOKEN, ' ']
     english_vocabulary = [START_TOKEN, ' ']
 
@@ -156,7 +156,6 @@ elif TOKENIZATION_LEVEL == 'word':
 
     italian_sentences = [italian_sentences[i] for i in valid_sentence_indicies]
     english_sentences = [english_sentences[i] for i in valid_sentence_indicies]
-
 
 #%%
 from torch.utils.data import Dataset, DataLoader
