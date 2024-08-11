@@ -10,7 +10,8 @@ import torch.nn.functional as F
 
 # Function to get the appropriate device (GPU if available, otherwise CPU)
 def get_device():
-    return torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+    #return torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+    return torch.device('cpu')
 
 # Function implementing scaled dot-product attention
 def scaled_dot_product(q, k, v, mask=None):
@@ -102,7 +103,6 @@ class SentenceEmbedding(nn.Module):
         x = self.batch_tokenize(x, start_token, end_token)
         x = self.embedding(x)
         pos = self.position_encoder().to(get_device())
-        print(pos)
         x = self.dropout(x + pos)
         return x
 
@@ -368,8 +368,6 @@ class Transformer(nn.Module):
                 dec_end_token=False): # x, y are batch of sentences
         
         # Encode the input sequence
-        print(x)
-        print(encoder_self_attention_mask.shape)
         x = self.encoder(x, encoder_self_attention_mask, start_token=enc_start_token, end_token=enc_end_token)
         
         # Decode the encoded sequence and generate the output sequence
