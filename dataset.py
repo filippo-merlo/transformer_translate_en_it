@@ -98,10 +98,25 @@ elif TOKENIZATION_LEVEL == 'word':
     nltk.download('punkt_tab')
     import itertools
 
-    def custom_tokenizer(sentence):
+    def custom_tokenizerr(sentence):
         ll = [[word_tokenize(w), ' '] for w in sentence.split()]
         spaced_token_list = list(itertools.chain(*list(itertools.chain(*ll))))[:-1]
         return spaced_token_list
+
+    def custom_tokenizer(sentence):
+            sentence = sentence.replace(' ', "<SPACE>")
+            sentence = word_tokenize(sentence)
+            i = 0
+            result = []
+            while i < len(sentence):
+                if sentence[i:i+3] == ['<', 'SPACE', '>']:
+                    result.append(' ')
+                    i += 3  # Skip the next two elements
+                else:
+                    result.append(sentence[i])
+                    i += 1
+            return result
+
 
     TOKENIZER = custom_tokenizer
     italian_vocabulary = [START_TOKEN]
@@ -168,5 +183,4 @@ class TextDataset(Dataset):
         return self.english_sentences[idx], self.italian_sentences[idx]
     
 dataset = TextDataset(english_sentences, italian_sentences)
-
 
