@@ -1,27 +1,47 @@
 #%% ### Byte-Pair Encoding tokenization ###
-''' from https://huggingface.co/learn/nlp-course/en/chapter6/5#training-algorithm '''
+''' from https://huggingface.co/learn/nlp-course/en/chapter6/8?fw=pt#building-a-wordpiece-tokenizer-from-scratch '''
 
 # Import necessary libraries
 from dataset import *
 
-english_corpus = english_sentences
-italian_corpus = italian_sentences
 
-print(english_corpus[:10])
-# Import gpt2 tokenizer:
-from transformers import AutoTokenizer
+english_corpus = ['' + ' ' + s for s in english_sentences][0]
+italian_corpus = ['' + ' ' + s for s in italian_sentences][0]
 
-tokenizer = AutoTokenizer.from_pretrained("gpt2")
+def get_training_corpus(corpus):
+    for i in range(0, len(dataset), 1000):
+        yield dataset[i : i + 1000]["text"]
 
-#%% compute the frequencies of each word in the corpus as we do the pre-tokenization:
-from collections import defaultdict
+from tokenizers import (
+    decoders,
+    models,
+    normalizers,
+    pre_tokenizers,
+    processors,
+    trainers,
+    Tokenizer,
+)
 
-word_freqs = defaultdict(int)
+it_tokenizer = Tokenizer(models.WordPiece(unk_token="[UNK]"))
+eng_tokenizer = Tokenizer(models.WordPiece(unk_token="[UNK]"))
 
-for text in english_corpus:
-    words_with_offsets = tokenizer.backend_tokenizer.pre_tokenizer.pre_tokenize_str(text)
-    new_words = [word for word, offset in words_with_offsets]
-    for word in new_words:
-        word_freqs[word] += 1
 
-print(word_freqs)
+eng_tokenizer.normalizer = normalizers.Sequence(
+    [normalizers.NFD(), normalizers.Lowercase()]
+)
+eng_tokenizer.normalizer = normalizers.Sequence(
+    [normalizers.NFD(), normalizers.Lowercase(), normalizers.StripAccents()]
+)
+
+it_tokenizer.pre_tokenizer = pre_tokenizers.Sequence(
+    [pre_tokenizers.WhitespaceSplit(), pre_tokenizers.Punctuation()]
+)
+eng_tokenizer.pre_tokenizer = pre_tokenizers.Sequence(
+    [pre_tokenizers.WhitespaceSplit(), pre_tokenizers.Punctuation()]
+)
+
+special_tokens = ["[UNK]", "[PAD]", "[SOS]", "[EOS]"]
+trainer = trainers.WordPieceTrainer(vocab_size=25000, special_tokens=special_tokens)
+
+it_tokenizer.train_from_iterator(get_training_corpus(italian_corpus), trainer=trainer)
+eng_tokenizer.train_from_iterator(get_training_corpus(english_corpus), trainer=trainer)
