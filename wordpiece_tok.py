@@ -54,8 +54,8 @@ eng_tokenizer.pre_tokenizer = pre_tokenizers.Sequence(
 special_tokens = ["[UNK]", "[PAD]", "[SOS]", "[EOS]"]
 trainer = trainers.WordPieceTrainer(vocab_size=25000, special_tokens=special_tokens)
 
-it_tokenizer.train_from_iterator(get_training_corpus(italian_corpus), trainer=trainer)
-eng_tokenizer.train_from_iterator(get_training_corpus(english_corpus), trainer=trainer)
+it_tokenizer.train_from_iterator(get_training_corpus(italian_sentences), trainer=trainer)
+eng_tokenizer.train_from_iterator(get_training_corpus(english_sentences), trainer=trainer)
 
 print(it_tokenizer.encode("Ciao, come stai?").tokens)
 print(eng_tokenizer.encode("Hello, how are you?").tokens)
