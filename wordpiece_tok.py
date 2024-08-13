@@ -7,7 +7,7 @@ from dataset import *
 english_corpus = ' '.join(english_sentences)
 italian_corpus = ' '.join(italian_sentences)
 
-print(english_corpus)
+print(len(english_corpus))
 
 def get_training_corpus(corpus):
     n_it = len(corpus) // 1000
