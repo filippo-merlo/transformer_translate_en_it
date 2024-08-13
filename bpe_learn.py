@@ -4,8 +4,8 @@
 # Import necessary libraries
 from dataset import *
 
-english_corpus = english_sentence
-italian_corpus = italian_sentence
+english_corpus = english_sentences
+italian_corpus = italian_sentences
 
 print(english_corpus[:10])
 # Import gpt2 tokenizer:
