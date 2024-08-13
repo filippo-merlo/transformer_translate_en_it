@@ -70,5 +70,5 @@ print('Sentence dec')
 print(it_decoding)
 
 import os
-it_tokenizer.save(os.path.join(TOKENIZER_PATH,"it_tokenizer.json"))
-eng_tokenizer.save(os.path.join(TOKENIZER_PATH,"eng_tokenizer.json"))
+it_tokenizer.save(os.path.join(CACHE_DIR,"it_tokenizer.json"))
+eng_tokenizer.save(os.path.join(CACHE_DIR,"eng_tokenizer.json"))
