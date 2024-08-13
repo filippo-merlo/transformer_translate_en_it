@@ -10,7 +10,7 @@ italian_corpus = ['' + ' ' + s for s in italian_sentences][0]
 
 def get_training_corpus(corpus):
     for i in range(0, len(dataset), 1000):
-        yield dataset[i : i + 1000]["text"]
+        yield corpus[i : i + 1000]
 
 from tokenizers import (
     decoders,
