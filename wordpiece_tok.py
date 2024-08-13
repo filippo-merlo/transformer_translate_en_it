@@ -4,12 +4,12 @@
 # Import necessary libraries
 from dataset import *
 
-
 english_corpus = ['' + ' ' + s for s in english_sentences][0]
 italian_corpus = ['' + ' ' + s for s in italian_sentences][0]
 
 def get_training_corpus(corpus):
-    for i in range(0, len(dataset), 1000):
+    n_it = len(corpus) // 1000
+    for i in range(0, len(dataset), n_it):
         yield corpus[i : i + 1000]
 
 from tokenizers import (
