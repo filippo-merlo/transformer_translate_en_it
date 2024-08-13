@@ -57,14 +57,18 @@ trainer = trainers.WordPieceTrainer(vocab_size=25000, special_tokens=special_tok
 it_tokenizer.train_from_iterator(get_training_corpus(italian_sentences), trainer=trainer)
 eng_tokenizer.train_from_iterator(get_training_corpus(english_sentences), trainer=trainer)
 
+it_tokenizer.decoder = decoders.WordPiece(prefix="##")
+eng_tokenizer.decoder = decoders.WordPiece(prefix="##")
+
 print('Sentence')
 print("Gli angeli e la figa di tua madre che è così fresca.")
 it_encoding = it_tokenizer.encode("Gli angeli e la figa di tua madre che è così fresca.".lower())
 print('Sentence enc')
 print(it_encoding.tokens)
-
-
-it_tokenizer.decoder = decoders.WordPiece(prefix="##")
 it_decoding = it_tokenizer.decode(it_encoding.ids)
 print('Sentence dec')
 print(it_decoding)
+
+import os
+it_tokenizer.save(os.path.join(TOKENIZER_PATH,"it_tokenizer.json"))
+eng_tokenizer.save(os.path.join(TOKENIZER_PATH,"eng_tokenizer.json"))
