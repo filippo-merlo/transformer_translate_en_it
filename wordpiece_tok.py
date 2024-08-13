@@ -4,8 +4,8 @@
 # Import necessary libraries
 from dataset import *
 
-english_corpus = ['' + ' ' + s for s in english_sentences][0]
-italian_corpus = ['' + ' ' + s for s in italian_sentences][0]
+english_corpus = ' '.join(english_sentences)
+italian_corpus = ' '.join(italian_sentences)
 
 print(english_corpus)
 
