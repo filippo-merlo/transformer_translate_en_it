@@ -57,5 +57,14 @@ trainer = trainers.WordPieceTrainer(vocab_size=25000, special_tokens=special_tok
 it_tokenizer.train_from_iterator(get_training_corpus(italian_sentences), trainer=trainer)
 eng_tokenizer.train_from_iterator(get_training_corpus(english_sentences), trainer=trainer)
 
-print(it_tokenizer.encode("Gli angeli e la figa di tua madre che è così fresca.".lower()).tokens)
-print(eng_tokenizer.encode("Hello, how are you?".lower()).tokens)
+print('Sentence')
+print("Gli angeli e la figa di tua madre che è così fresca.")
+it_encoding = it_tokenizer.encode("Gli angeli e la figa di tua madre che è così fresca.".lower()).tokens
+print('Sentence enc')
+print(it_encoding)
+
+
+it_tokenizer.decoder = decoders.WordPiece(prefix="##")
+it_decoding = it_tokenizer.decode(it_encoding.ids)
+print('Sentence dec')
+print(it_decoding)
