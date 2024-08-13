@@ -65,6 +65,6 @@ print(it_encoding)
 
 
 it_tokenizer.decoder = decoders.WordPiece(prefix="##")
-it_decoding = it_tokenizer.decode(it_encoding.ids)
+it_decoding = it_tokenizer.decode(it_encoding)
 print('Sentence dec')
 print(it_decoding)
