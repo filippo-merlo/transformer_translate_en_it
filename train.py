@@ -164,7 +164,7 @@ for epoch in range(num_epochs):
                 print(f"Italian Prediction: {predicted_sentence}")
                 transformer.eval()
                 it_sentence = ("",)
-                eng_sentence = ("and we (angels) descend not except by the command of your lord (o muhammad saw).",)
+                eng_sentence = ("should we go to the mall?",)
                 for word_counter in range(max_sequence_length):
                     encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask= create_masks(eng_sentence, it_sentence)
                     predictions = transformer(eng_sentence,
