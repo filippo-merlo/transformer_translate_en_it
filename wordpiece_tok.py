@@ -37,7 +37,7 @@ it_tokenizer = Tokenizer(models.WordPiece(unk_token="[UNK]"))
 eng_tokenizer = Tokenizer(models.WordPiece(unk_token="[UNK]"))
 
 
-eng_tokenizer.normalizer = normalizers.Sequence(
+it_tokenizer.normalizer = normalizers.Sequence(
     [normalizers.NFD(), normalizers.Lowercase()]
 )
 eng_tokenizer.normalizer = normalizers.Sequence(
@@ -57,5 +57,5 @@ trainer = trainers.WordPieceTrainer(vocab_size=25000, special_tokens=special_tok
 it_tokenizer.train_from_iterator(get_training_corpus(italian_sentences), trainer=trainer)
 eng_tokenizer.train_from_iterator(get_training_corpus(english_sentences), trainer=trainer)
 
-print(it_tokenizer.encode("Ciao, come stai?".lower()).tokens)
+print(it_tokenizer.encode("Gli angeli e la figa di tua madre che è così fresca.".lower()).tokens)
 print(eng_tokenizer.encode("Hello, how are you?".lower()).tokens)
