@@ -1,18 +1,27 @@
 #%% ### Byte-Pair Encoding tokenization ###
 ''' from https://huggingface.co/learn/nlp-course/en/chapter6/8?fw=pt#building-a-wordpiece-tokenizer-from-scratch '''
 
-# Import necessary libraries
-from dataset import *
+from config import *
 
-english_corpus = ' '.join(english_sentences)
-italian_corpus = ' '.join(italian_sentences)
+# Load the dataset
+from datasets import load_dataset
+ds = load_dataset("yhavinga/ccmatrix", "en-it", cache_dir=CACHE_DIR)
+dataset_iter = iter(ds['train'])
 
-print(len(english_corpus))
+# Get subset of sentences from dataset: 200000
+from tqdm import tqdm 
+TOTAL_SENTENCES = 200000
+scores = []
+english_sentences = []
+italian_sentences = []
+for _ in tqdm(range(TOTAL_SENTENCES)):
+    example = next(dataset_iter)
+    italian_sentences.append(example['translation']['it'].lower())
+    english_sentences.append(example['translation']['en'].lower())
 
-def get_training_corpus(corpus):
-    n_it = len(corpus) // 1000
-    for i in range(0, len(dataset), n_it):
-        yield corpus[i : i + 1000]
+def get_training_corpus(sentences):
+    for i in range(0, len(sentences), 1000):
+        yield ' '.join(sentences[i : i + 1000])
 
 from tokenizers import (
     decoders,
