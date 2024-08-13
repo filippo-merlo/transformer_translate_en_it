@@ -7,7 +7,7 @@ from dataset import *
 english_corpus = english_sentence
 italian_corpus = italian_sentence
 
-
+print(english_corpus[:10])
 # Import gpt2 tokenizer:
 from transformers import AutoTokenizer
 
