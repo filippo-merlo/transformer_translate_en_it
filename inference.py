@@ -3,6 +3,7 @@ import numpy as np
 from dataset import *
 from config import *
 from model import *
+
 device = torch.device("cuda")
 max_sequence_length = 200
 
@@ -30,7 +31,7 @@ transformer = Transformer(d_model,
                           TOKENIZER_ENC,
                           TOKENIZER_DEC)
 
-transformer.load_state_dict(torch.load(os.path.join(MODEL_PATH,f"transformer_model_{TOKENIZATION_LEVEL}_level_tok.pth")))
+transformer.load_state_dict(torch.load(os.path.join(MODEL_PATH,f"transformer_model_{TOKENIZATION_LEVEL}_level_tok.pth"))).to(device)
 transformer.eval()
 
 # A large negative constant used to represent negative infinity in mask calculations.
