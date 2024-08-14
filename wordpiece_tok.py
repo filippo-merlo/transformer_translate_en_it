@@ -62,7 +62,7 @@ eng_tokenizer.decoder = decoders.WordPiece(prefix="##")
 
 print('Sentence')
 print("Gli angeli e la pappà che è così fresca.")
-it_encoding = it_tokenizer.encode("Gli angeli e la figa di tua madre che è così fresca.".lower())
+it_encoding = it_tokenizer.encode("Gli angeli e la pappà che è così fresca.".lower())
 print('Sentence enc')
 print(it_encoding.tokens)
 print('ids')
