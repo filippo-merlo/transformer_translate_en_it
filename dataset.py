@@ -14,10 +14,7 @@ PADDING_TOKEN = '<PADDING>'
 END_TOKEN = '<END>'
 
 TEST = False
-if TEST:
-    TOTAL_SENTENCES = 203000
-else:
-    TOTAL_SENTENCES = 200000
+TOTAL_SENTENCES = 200000
 
 TOKENIZATION_LEVEL = 'character'
 
@@ -50,10 +47,7 @@ if TOKENIZATION_LEVEL == 'character':
     scores = []
     english_sentences = []
     italian_sentences = []
-    for i in tqdm(range(TOTAL_SENTENCES)):
-        if TEST:
-            i <= 200000
-            continue
+    for _ in tqdm(range(TOTAL_SENTENCES)):
         example = next(dataset_iter)
         italian_sentences.append(example['translation']['it'].lower())
         english_sentences.append(example['translation']['en'].lower())
@@ -140,10 +134,7 @@ elif TOKENIZATION_LEVEL == 'word':
     english_sentences = []
     italian_sentences = []
 
-    for i in tqdm(range(TOTAL_SENTENCES)):
-        if TEST:
-            i <= 200000
-            continue
+    for _ in tqdm(range(TOTAL_SENTENCES)):
         example = next(dataset_iter)
         italian_sentences.append(example['translation']['it'].lower())
         english_sentences.append(example['translation']['en'].lower())
@@ -210,10 +201,7 @@ elif TOKENIZATION_LEVEL == 'word_piece':
     english_sentences = []
     italian_sentences = []
 
-    for i in tqdm(range(TOTAL_SENTENCES)):
-        if TEST:
-            i <= 200000
-            continue
+    for _ in tqdm(range(TOTAL_SENTENCES)):
         example = next(dataset_iter)
         italian_sentences.append(example['translation']['it'].lower())
         english_sentences.append(example['translation']['en'].lower())
