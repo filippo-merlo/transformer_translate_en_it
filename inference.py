@@ -30,7 +30,7 @@ transformer = Transformer(d_model,
                           TOKENIZER_ENC,
                           TOKENIZER_DEC)
 
-transformer.load_state_dict(torch.load(MODEL_PATH))
+transformer.load_state_dict(torch.load(os.path.join(MODEL_PATH,f"transformer_model_{TOKENIZATION_LEVEL}_level_tok.pth")))
 transformer.eval()
 
 # A large negative constant used to represent negative infinity in mask calculations.
