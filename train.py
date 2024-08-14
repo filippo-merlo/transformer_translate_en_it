@@ -142,7 +142,9 @@ for epoch in range(num_epochs):
                                      dec_start_token=True,
                                      dec_end_token=True)
         labels = transformer.decoder.sentence_embedding.batch_tokenize(it_batch, start_token=False, end_token=True)
-        print(it_tokenizer.decode(list(labels)))
+        print(type(it_predictions))
+        print(type(labels))
+        print(it_tokenizer.decode(labels))
         loss = criterion(
             it_predictions.view(-1, it_vocab_size).to(device),
             labels.view(-1).to(device)
