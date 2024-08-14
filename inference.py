@@ -116,5 +116,23 @@ def translate(eng_sentence):
         break
   return it_sentence[0]
      
-translation = translate("what should we do when the day starts?")
-print(translation)
+# compute BLUE SCORE
+from nltk.translate.bleu_score import sentence_bleu
+from nltk.translate.bleu_score import SmoothingFunction
+smoothie = SmoothingFunction().method4
+
+def blue_score(pred_sentences, it_sentences):
+  blue_scores = []
+  for pred_sentences, it_sentence in zip(pred_sentences, it_sentences):
+    pred_sentences = pred_sentences.split()
+    it_sentence = it_sentence.split()
+    blue_scores.append(sentence_bleu([pred_sentences], it_sentence, smoothing_function=smoothie))
+  return np.mean(blue_scores)
+
+
+for i in range(TOTAL_SENTENCES):
+  english_sentence = english_sentences[i]
+  target_sentence = italian_sentences[i]
+  predicted_sentence = translate(english_sentences[i])
+
+score_mean = blue_score(predicted_sentence, target_sentence)
