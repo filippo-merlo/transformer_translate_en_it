@@ -13,10 +13,12 @@ START_TOKEN = '<START>'
 PADDING_TOKEN = '<PADDING>'
 END_TOKEN = '<END>'
 
-TOKENIZATION_LEVEL = 'char'
+TOKENIZATION_LEVEL = 'word_piece'
 
 if TOKENIZATION_LEVEL == 'char':
-    TOKENIZER = None
+    TOKENIZER_ENC = None
+    TOKENIZER_DEC = None
+
     italian_vocabulary = [
         START_TOKEN, ' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', '–','—',
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
@@ -118,7 +120,9 @@ elif TOKENIZATION_LEVEL == 'word':
             return result
 
 
-    TOKENIZER = custom_tokenizer
+    TOKENIZER_ENC = custom_tokenizer
+    TOKENIZER_DEC = custom_tokenizer
+
     italian_vocabulary = [START_TOKEN]
     english_vocabulary = [START_TOKEN]
 
@@ -133,8 +137,8 @@ elif TOKENIZATION_LEVEL == 'word':
         example = next(dataset_iter)
         italian_sentences.append(example['translation']['it'].lower())
         english_sentences.append(example['translation']['en'].lower())
-        italian_words += TOKENIZER(example['translation']['it'].lower())
-        english_words += TOKENIZER(example['translation']['en'].lower())
+        italian_words += TOKENIZER_DEC(example['translation']['it'].lower())
+        english_words += TOKENIZER_ENC(example['translation']['en'].lower())
     
     italian_vocabulary = italian_vocabulary + list(set(italian_words)) + [PADDING_TOKEN, END_TOKEN]
     english_vocabulary = english_vocabulary + list(set(english_words)) + [PADDING_TOKEN, END_TOKEN]
@@ -167,6 +171,25 @@ elif TOKENIZATION_LEVEL == 'word':
 
     italian_sentences = [italian_sentences[i] for i in valid_sentence_indicies]
     english_sentences = [english_sentences[i] for i in valid_sentence_indicies]
+
+elif TOKENIZATION_LEVEL == 'word_piece':
+    from tokenizers import (
+        decoders,
+        Tokenizer,
+    )
+    import os
+
+    it_tokenizer = Tokenizer.from_file(os.path.join(CACHE_DIR,"it_tokenizer.json"))
+    eng_tokenizer = Tokenizer.from_file(os.path.join(CACHE_DIR,"eng_tokenizer.json"))
+    TOKENIZER_ENC = eng_tokenizer.encode()
+    TOKENIZER_DEC = it_tokenizer.encode()
+
+    english_vocabulary = eng_tokenizer.get_vocab()
+    italian_vocabulary = it_tokenizer.get_vocab()
+
+    print(italian_vocabulary)
+
+
 
 #%%
 from torch.utils.data import Dataset, DataLoader

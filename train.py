@@ -48,7 +48,8 @@ transformer = Transformer(d_model,
                           START_TOKEN, 
                           END_TOKEN, 
                           PADDING_TOKEN,
-                          TOKENIZER)
+                          TOKENIZER_ENC,
+                          TOKENIZER_DEC,)
 #%%
 transformer
 #%%
@@ -72,7 +73,7 @@ optim = torch.optim.Adam(transformer.parameters(), lr=1e-4)
 NEG_INFTY = -1e9
 
 
-def create_masks(eng_batch, it_batch, tokenizer = None):
+def create_masks(eng_batch, it_batch, tokenizer_enc = None, tokenizer_dec = None):
     # Determine the number of sentences in the batch.
     num_sentences = len(eng_batch)
     
@@ -88,8 +89,9 @@ def create_masks(eng_batch, it_batch, tokenizer = None):
     # Iterate over each sentence in the batch
     for idx in range(num_sentences):
         # Get the length of the English and Italian sentences
-        if tokenizer:
-            eng_sentence_length, it_sentence_length = len(tokenizer(eng_batch[idx])), len(tokenizer(it_batch[idx]))
+        if tokenizer_enc and tokenizer_dec:
+            eng_sentence_length = len(tokenizer_enc(eng_batch[idx]))
+            it_sentence_length = len(tokenizer_dec(eng_batch[idx]))
         else:
             eng_sentence_length, it_sentence_length = len(eng_batch[idx]), len(it_batch[idx])
         
@@ -128,7 +130,7 @@ for epoch in range(num_epochs):
     for batch_num, batch in tqdm(enumerate(iterator)):
         transformer.train()
         eng_batch, it_batch = batch
-        encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask = create_masks(eng_batch, it_batch, TOKENIZER)
+        encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask = create_masks(eng_batch, it_batch, TOKENIZER_ENC, TOKENIZER_DEC)
         optim.zero_grad()
         it_predictions = transformer(eng_batch,
                                      it_batch,

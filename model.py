@@ -345,12 +345,13 @@ class Transformer(nn.Module):
                 START_TOKEN, 
                 END_TOKEN, 
                 PADDING_TOKEN,
-                tokenizer
+                tokenizer_enc,
+                tokenizer_dec
                 ):
         super().__init__()
         # Initialize the encoder, decoder, and final linear layer
-        self.encoder = Encoder(d_model, ffn_hidden, num_heads, drop_prob, num_layers, max_sequence_length, from_lang_to_index, START_TOKEN, END_TOKEN, PADDING_TOKEN, tokenizer)
-        self.decoder = Decoder(d_model, ffn_hidden, num_heads, drop_prob, num_layers, max_sequence_length, to_lang_to_index, START_TOKEN, END_TOKEN, PADDING_TOKEN, tokenizer)
+        self.encoder = Encoder(d_model, ffn_hidden, num_heads, drop_prob, num_layers, max_sequence_length, from_lang_to_index, START_TOKEN, END_TOKEN, PADDING_TOKEN, tokenizer_enc)
+        self.decoder = Decoder(d_model, ffn_hidden, num_heads, drop_prob, num_layers, max_sequence_length, to_lang_to_index, START_TOKEN, END_TOKEN, PADDING_TOKEN, tokenizer_dec)
         self.linear = nn.Linear(d_model, to_lang_vocab_size)
         self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
