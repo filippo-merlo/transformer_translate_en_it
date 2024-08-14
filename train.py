@@ -163,6 +163,7 @@ for epoch in range(num_epochs):
             print(f"Italian Prediction: {predicted_sentence}")
             transformer.eval()
             it_sentence = ("",)
+            it_ids = []
             eng_sentence = ("should we go to the mall?",)
             for word_counter in range(max_sequence_length):
                 encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask= create_masks(eng_sentence, it_sentence, TOKENIZER_ENC, TOKENIZER_DEC)
@@ -177,10 +178,18 @@ for epoch in range(num_epochs):
                                         dec_end_token=False)
                 next_token_prob_distribution = predictions[0][word_counter] # not actual probs
                 next_token_index = torch.argmax(next_token_prob_distribution).item()
-                next_token = it_index_to_vocabulary[next_token_index]
-                if next_token == END_TOKEN:
-                    break
-                it_sentence = (it_sentence[0] + next_token, )
+                if TOKENIZATION_LEVEL == 'word_piece':
+                    if it_tokenizer.decode([next_token_index]) == END_TOKEN:
+                        print(it_tokenizer.decode([next_token_index]))
+                        print(END_TOKEN)
+                        break
+                    it_ids.append(next_token_index)
+                    it_sentence = (it_tokenizer.decode(it_ids),)
+                else:
+                    next_token = it_index_to_vocabulary[next_token_index]
+                    if next_token == END_TOKEN:
+                        break
+                    it_sentence = (it_sentence[0] + next_token, )
 
             print(f"Evaluation translation (should we go to the mall?) : {it_sentence}")
             print("-------------------------------------------")
