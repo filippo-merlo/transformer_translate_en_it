@@ -123,9 +123,9 @@ smoothie = SmoothingFunction().method4
 
 def blue_score(pred_sentences, it_sentences):
   blue_scores = []
-  for pred_sentences, it_sentence in tqdm(zip(pred_sentences, it_sentences)):
-    print(pred_sentences, it_sentence)
-    pred_sentences = pred_sentences.split()
+  for pred_sentence, it_sentence in tqdm(zip(pred_sentences, it_sentences)):
+    print(pred_sentence, it_sentence)
+    pred_sentence = pred_sentence.split()
     it_sentence = it_sentence.split()
     blue_scores.append(sentence_bleu([pred_sentences], it_sentence, smoothing_function=smoothie))
   return np.mean(blue_scores)
