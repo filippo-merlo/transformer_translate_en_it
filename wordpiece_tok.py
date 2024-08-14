@@ -52,7 +52,7 @@ eng_tokenizer.pre_tokenizer = pre_tokenizers.Sequence(
 )
 
 special_tokens = ["<UNK>", '<PADDING>', '<START>', '<END>']
-trainer = trainers.WordPieceTrainer(vocab_size=25000, special_tokens=special_tokens)
+trainer = trainers.WordPieceTrainer(vocab_size=20000, special_tokens=special_tokens)
 
 it_tokenizer.train_from_iterator(get_training_corpus(italian_sentences), trainer=trainer)
 eng_tokenizer.train_from_iterator(get_training_corpus(english_sentences), trainer=trainer)
