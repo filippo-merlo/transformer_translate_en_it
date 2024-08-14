@@ -192,6 +192,7 @@ elif TOKENIZATION_LEVEL == 'word_piece':
 
     english_vocabulary = eng_tokenizer.get_vocab()
     italian_vocabulary = it_tokenizer.get_vocab()
+    print(italian_vocabulary['<END>'])
 
     from tqdm import tqdm 
     italian_words = []
