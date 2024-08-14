@@ -103,17 +103,17 @@ def translate(eng_sentence):
     next_token_prob_distribution = predictions[0][word_counter]
     next_token_index = torch.argmax(next_token_prob_distribution).item()
     if TOKENIZATION_LEVEL == 'word_piece':
-      it_ids.append(next_token_index)
-      it_sentence = (it_tokenizer.decode(it_ids),)
       if it_tokenizer.decode([next_token_index]) == END_TOKEN:
         print(it_tokenizer.decode([next_token_index]))
         print(END_TOKEN)
         break
+      it_ids.append(next_token_index)
+      it_sentence = (it_tokenizer.decode(it_ids),)
     else:
       next_token = it_index_to_vocabulary[next_token_index]
-      it_sentence = (it_sentence[0] + next_token, )
       if next_token == END_TOKEN:
         break
+      it_sentence = (it_sentence[0] + next_token, )
   return it_sentence[0]
      
 # compute BLUE SCORE
