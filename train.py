@@ -162,7 +162,7 @@ for epoch in range(num_epochs):
                     if it_tokenizer.decode([idx]) == END_TOKEN:
                         break
                     ids_sentence.append(idx)
-                it_sentence_predicted = (it_tokenizer.decode(ids_sentence),)
+                predicted_sentence = it_tokenizer.decode(ids_sentence)
             else:
                 for idx in it_sentence_predicted:
                     if idx == it_vocabulary_to_index[END_TOKEN]:
