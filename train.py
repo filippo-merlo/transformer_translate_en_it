@@ -190,7 +190,7 @@ for epoch in range(num_epochs):
                     if it_tokenizer.decode([next_token_index]) == END_TOKEN:
                         break
                     it_ids.append(next_token_index)
-                    it_sentence = (it_tokenizer.decode(it_ids),)
+                    it_sentence = (it_tokenizer.decode(it_ids), )
                 else:
                     next_token = it_index_to_vocabulary[next_token_index]
                     if next_token == END_TOKEN:
