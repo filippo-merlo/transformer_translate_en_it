@@ -29,9 +29,9 @@ transformer = Transformer(d_model,
                           END_TOKEN, 
                           PADDING_TOKEN,
                           TOKENIZER_ENC,
-                          TOKENIZER_DEC)
+                          TOKENIZER_DEC).to(device)
 
-transformer.load_state_dict(torch.load(os.path.join(MODEL_PATH,f"transformer_model_{TOKENIZATION_LEVEL}_level_tok.pth"))).to(device)
+transformer.load_state_dict(torch.load(os.path.join(MODEL_PATH,f"transformer_model_{TOKENIZATION_LEVEL}_level_tok.pth")))
 transformer.eval()
 
 # A large negative constant used to represent negative infinity in mask calculations.
