@@ -131,7 +131,7 @@ def blue_score(pred_sentences, it_sentences):
   return np.mean(blue_scores)
 
 
-for i in tqdm(range(TOTAL_SENTENCES)):
+for i in tqdm(range(100)):
   english_sentence = english_sentences[i]
   target_sentence = italian_sentences[i]
   predicted_sentence = translate(english_sentences[i])
