@@ -14,7 +14,7 @@ END_TOKEN = '<END>'
 
 TOTAL_SENTENCES = 200000
 
-TOKENIZATION_LEVEL = 'character'
+TOKENIZATION_LEVEL = 'word_piece'
 
 if TOKENIZATION_LEVEL == 'character':
     TOKENIZER_ENC = None
@@ -81,8 +81,8 @@ if TOKENIZATION_LEVEL == 'character':
     valid_sentence_indicies = []
     for index in range(len(italian_sentences)):
         italian_sentence, english_sentence = italian_sentences[index], english_sentences[index]
-        if is_valid_length(italian_sentence, max_sequence_length) \
-        and is_valid_length(english_sentence, max_sequence_length) \
+        if is_valid_length(italian_sentence, max_sequence_length)\
+        and is_valid_length(english_sentence, max_sequence_length)\
         and is_valid_tokens(italian_sentence, italian_vocabulary)\
         and is_valid_tokens(english_sentence, italian_vocabulary):
             valid_sentence_indicies.append(index)

@@ -87,6 +87,7 @@ def create_masks(eng_batch, it_batch, tokenizer_enc = None, tokenizer_dec = None
 def translate(eng_sentence):
   eng_sentence = (eng_sentence,)
   it_sentence = ("",)
+  it_ids = []
   for word_counter in range(max_sequence_length):
     encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask= create_masks(eng_sentence, it_sentence)
     predictions = transformer(eng_sentence,
@@ -98,13 +99,21 @@ def translate(eng_sentence):
                               enc_end_token=False,
                               dec_start_token=True,
                               dec_end_token=False)
+    
     next_token_prob_distribution = predictions[0][word_counter]
-    print(next_token_prob_distribution)
     next_token_index = torch.argmax(next_token_prob_distribution).item()
-    next_token = it_index_to_vocabulary[next_token_index]
-    it_sentence = (it_sentence[0] + next_token, )
-    if next_token == END_TOKEN:
-      break
+    if TOKENIZATION_LEVEL == 'word_piece':
+      it_ids.append(next_token_index)
+      print(it_ids)
+      it_sentence = (it_tokenizer.decode(it_ids),)
+      print(it_sentence)
+      if it_tokenizer.decode(next_token_index) == END_TOKEN:
+        break
+    else:
+      next_token = it_index_to_vocabulary[next_token_index]
+      it_sentence = (it_sentence[0] + next_token, )
+      if next_token == END_TOKEN:
+        break
   return it_sentence[0]
      
 translation = translate("what should we do when the day starts?")
