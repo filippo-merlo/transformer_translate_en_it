@@ -107,7 +107,7 @@ def translate(eng_sentence):
       print(it_ids)
       it_sentence = (it_tokenizer.decode(it_ids),)
       print(it_sentence)
-      if it_tokenizer.decode(next_token_index) == END_TOKEN:
+      if it_tokenizer.decode([next_token_index]) == END_TOKEN:
         break
     else:
       next_token = it_index_to_vocabulary[next_token_index]
