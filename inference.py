@@ -3,6 +3,7 @@ import numpy as np
 from dataset import *
 from config import *
 from model import *
+import os 
 
 device = torch.device("cuda")
 max_sequence_length = 200
