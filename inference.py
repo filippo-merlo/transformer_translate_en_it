@@ -104,10 +104,11 @@ def translate(eng_sentence):
     next_token_index = torch.argmax(next_token_prob_distribution).item()
     if TOKENIZATION_LEVEL == 'word_piece':
       it_ids.append(next_token_index)
-      print(it_ids)
       it_sentence = (it_tokenizer.decode(it_ids),)
       print(it_sentence)
       if it_tokenizer.decode([next_token_index]) == END_TOKEN:
+        print(it_tokenizer.decode([next_token_index]))
+        print(END_TOKEN)
         break
     else:
       next_token = it_index_to_vocabulary[next_token_index]
