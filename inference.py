@@ -123,16 +123,17 @@ smoothie = SmoothingFunction().method4
 
 def blue_score(pred_sentences, it_sentences):
   blue_scores = []
-  for pred_sentences, it_sentence in zip(pred_sentences, it_sentences):
+  for pred_sentences, it_sentence in tqdm(zip(pred_sentences, it_sentences)):
     pred_sentences = pred_sentences.split()
     it_sentence = it_sentence.split()
     blue_scores.append(sentence_bleu([pred_sentences], it_sentence, smoothing_function=smoothie))
   return np.mean(blue_scores)
 
 
-for i in range(TOTAL_SENTENCES):
+for i in tqdm(range(TOTAL_SENTENCES)):
   english_sentence = english_sentences[i]
   target_sentence = italian_sentences[i]
   predicted_sentence = translate(english_sentences[i])
 
 score_mean = blue_score(predicted_sentence, target_sentence)
+print(score_mean)
