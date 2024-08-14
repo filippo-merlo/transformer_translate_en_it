@@ -1,7 +1,6 @@
 #%%
 # Import paths
 from config import *
-
 # Load the dataset
 from datasets import load_dataset
 ds = load_dataset("yhavinga/ccmatrix", "en-it", cache_dir=CACHE_DIR)
@@ -13,7 +12,6 @@ START_TOKEN = '<START>'
 PADDING_TOKEN = '<PADDING>'
 END_TOKEN = '<END>'
 
-TEST = False
 TOTAL_SENTENCES = 200000
 
 TOKENIZATION_LEVEL = 'character'

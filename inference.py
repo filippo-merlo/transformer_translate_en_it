@@ -99,9 +99,13 @@ def translate(eng_sentence):
                               dec_start_token=True,
                               dec_end_token=False)
     next_token_prob_distribution = predictions[0][word_counter]
+    print(next_token_prob_distribution)
     next_token_index = torch.argmax(next_token_prob_distribution).item()
+    print(next_token_index)
     next_token = it_index_to_vocabulary[next_token_index]
+    print(next_token)
     it_sentence = (it_sentence[0] + next_token, )
+    print(it_sentence)
     if next_token == END_TOKEN:
       break
   return it_sentence[0]
