@@ -137,7 +137,7 @@ predicted_sentences = []
 for i in tqdm(range(100)):
   english_sentence = english_sentences[i]
   target_sentences.append(italian_sentences[i])
-  predicted_sentences.append(translate(english_sentences[i]))
+  predicted_sentences.append(translate(english_sentences[i]).replace('<END>', ''))
 
 score_mean = blue_score(predicted_sentences, target_sentences)
 print(score_mean)
