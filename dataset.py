@@ -194,9 +194,45 @@ elif TOKENIZATION_LEVEL == 'word_piece':
     english_vocabulary = eng_tokenizer.get_vocab()
     italian_vocabulary = it_tokenizer.get_vocab()
 
-    print(italian_vocabulary)
+    from tqdm import tqdm 
+    TOTAL_SENTENCES = 200000
+    italian_words = []
+    english_words = []
+    english_sentences = []
+    italian_sentences = []
 
+    for _ in tqdm(range(TOTAL_SENTENCES)):
+        example = next(dataset_iter)
+        italian_sentences.append(example['translation']['it'].lower())
+        english_sentences.append(example['translation']['en'].lower())
+    
+    # Get index to character and character to index mappings
+    it_index_to_vocabulary = {k:v for k,v in enumerate(italian_vocabulary)}
+    en_index_to_vocabulary = {k:v for k,v in enumerate(english_vocabulary)}
 
+    it_vocabulary_to_index = {v:k for k,v in enumerate(italian_vocabulary)}
+    en_vocabulary_to_index = {v:k for k,v in enumerate(english_vocabulary)}
+
+    # set max sequence length and filter out sentences that are too long or have invalid tokens
+    max_sequence_length = 200
+
+    # The sentence is less than the max sequence length
+    def is_valid_length(sentence, max_sequence_length):
+        return len(list(sentence)) < (max_sequence_length - 1) # need to re-add the end token so leaving 1 space
+
+    # Filter out sentences that are too long or have invalid tokens
+    valid_sentence_indicies = []
+    for index in tqdm(range(len(italian_sentences))):
+        italian_sentence, english_sentence = italian_sentences[index], english_sentences[index]
+        if is_valid_length(italian_sentence, max_sequence_length) \
+        and is_valid_length(english_sentence, max_sequence_length):
+            valid_sentence_indicies.append(index)
+
+    print(f"Number of sentences: {len(italian_sentences)}")
+    print(f"Number of valid sentences: {len(valid_sentence_indicies)}")
+
+    italian_sentences = [italian_sentences[i] for i in valid_sentence_indicies]
+    english_sentences = [english_sentences[i] for i in valid_sentence_indicies]
 
 #%%
 from torch.utils.data import Dataset, DataLoader
