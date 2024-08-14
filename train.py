@@ -49,7 +49,7 @@ transformer = Transformer(d_model,
                           END_TOKEN, 
                           PADDING_TOKEN,
                           TOKENIZER_ENC,
-                          TOKENIZER_DEC,)
+                          TOKENIZER_DEC)
 #%%
 transformer
 #%%
@@ -71,7 +71,6 @@ optim = torch.optim.Adam(transformer.parameters(), lr=1e-4)
 
 # A large negative constant used to represent negative infinity in mask calculations.
 NEG_INFTY = -1e9
-
 
 def create_masks(eng_batch, it_batch, tokenizer_enc = None, tokenizer_dec = None):
     # Determine the number of sentences in the batch.
@@ -194,6 +193,3 @@ for epoch in range(num_epochs):
 import os
 model_save_path = os.path.join(MODEL_PATH,f"transformer_model_{TOKENIZATION_LEVEL}_level_tok.pth")
 torch.save(transformer.state_dict(), model_save_path)
-
-
-#%%
