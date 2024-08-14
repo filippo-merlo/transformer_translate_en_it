@@ -86,7 +86,7 @@ def create_masks(eng_batch, it_batch, tokenizer_enc = None, tokenizer_dec = None
 
 def translate(eng_sentence):
   eng_sentence = (eng_sentence,)
-  it_sentence = ("",)
+  it_sentence = ("", )
   it_ids = []
   for word_counter in range(max_sequence_length):
     encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask= create_masks(eng_sentence, it_sentence)

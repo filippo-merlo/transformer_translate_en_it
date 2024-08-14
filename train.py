@@ -170,7 +170,7 @@ for epoch in range(num_epochs):
                     predicted_sentence += it_index_to_vocabulary[idx.item()]
             print(f"Italian Prediction: {predicted_sentence}")
             transformer.eval()
-            it_sentence = ("",)
+            it_sentence = ("", )
             it_ids = []
             eng_sentence = ("should we go to the mall?",)
             for word_counter in range(max_sequence_length):
