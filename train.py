@@ -149,6 +149,7 @@ for epoch in range(num_epochs):
         loss = loss.sum() / valid_indicies.sum()
         loss.backward()
         optim.step()
+'''
         #train_losses.append(loss.item())
         if batch_num % 100 == 0:
             print(f"Iteration {batch_num} : {loss.item()}")
@@ -203,3 +204,4 @@ for epoch in range(num_epochs):
 import os
 model_save_path = os.path.join(MODEL_PATH,f"transformer_model_{TOKENIZATION_LEVEL}_level_tok.pth")
 torch.save(transformer.state_dict(), model_save_path)
+'''
