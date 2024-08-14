@@ -160,9 +160,9 @@ for epoch in range(num_epochs):
             if TOKENIZATION_LEVEL == 'word_piece':
                 ids_sentence = []
                 for idx in it_sentence_predicted:
+                    ids_sentence.append(idx)
                     if it_tokenizer.decode([idx]) == END_TOKEN:
                         break
-                    ids_sentence.append(idx)
                 predicted_sentence = it_tokenizer.decode(ids_sentence)
             else:
                 for idx in it_sentence_predicted:
