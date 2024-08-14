@@ -149,7 +149,7 @@ for epoch in range(num_epochs):
         loss = loss.sum() / valid_indicies.sum()
         loss.backward()
         optim.step()
-'''
+
         #train_losses.append(loss.item())
         if batch_num % 100 == 0:
             print(f"Iteration {batch_num} : {loss.item()}")
@@ -170,6 +170,7 @@ for epoch in range(num_epochs):
                         break
                     predicted_sentence += it_index_to_vocabulary[idx.item()]
             print(f"Italian Prediction: {predicted_sentence}")
+'''
             transformer.eval()
             it_sentence = ("", )
             it_ids = []
