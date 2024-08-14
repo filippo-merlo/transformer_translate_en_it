@@ -13,6 +13,12 @@ START_TOKEN = '<START>'
 PADDING_TOKEN = '<PADDING>'
 END_TOKEN = '<END>'
 
+TEST = False
+if TEST:
+    TOTAL_SENTENCES = 203000
+else:
+    TOTAL_SENTENCES = 200000
+
 TOKENIZATION_LEVEL = 'character'
 
 if TOKENIZATION_LEVEL == 'character':
@@ -41,11 +47,13 @@ if TOKENIZATION_LEVEL == 'character':
 
     # Get subset of sentences from dataset: 200000
     from tqdm import tqdm 
-    TOTAL_SENTENCES = 200000
     scores = []
     english_sentences = []
     italian_sentences = []
-    for _ in tqdm(range(TOTAL_SENTENCES)):
+    for i in tqdm(range(TOTAL_SENTENCES)):
+        if TEST:
+            i <= 200000
+            continue
         example = next(dataset_iter)
         italian_sentences.append(example['translation']['it'].lower())
         english_sentences.append(example['translation']['en'].lower())
@@ -127,13 +135,15 @@ elif TOKENIZATION_LEVEL == 'word':
     english_vocabulary = [START_TOKEN]
 
     from tqdm import tqdm 
-    TOTAL_SENTENCES = 200000
     italian_words = []
     english_words = []
     english_sentences = []
     italian_sentences = []
 
-    for _ in tqdm(range(TOTAL_SENTENCES)):
+    for i in tqdm(range(TOTAL_SENTENCES)):
+        if TEST:
+            i <= 200000
+            continue
         example = next(dataset_iter)
         italian_sentences.append(example['translation']['it'].lower())
         english_sentences.append(example['translation']['en'].lower())
@@ -195,13 +205,15 @@ elif TOKENIZATION_LEVEL == 'word_piece':
     italian_vocabulary = it_tokenizer.get_vocab()
 
     from tqdm import tqdm 
-    TOTAL_SENTENCES = 200000
     italian_words = []
     english_words = []
     english_sentences = []
     italian_sentences = []
 
-    for _ in tqdm(range(TOTAL_SENTENCES)):
+    for i in tqdm(range(TOTAL_SENTENCES)):
+        if TEST:
+            i <= 200000
+            continue
         example = next(dataset_iter)
         italian_sentences.append(example['translation']['it'].lower())
         english_sentences.append(example['translation']['en'].lower())
