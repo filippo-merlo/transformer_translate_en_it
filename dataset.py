@@ -181,8 +181,15 @@ elif TOKENIZATION_LEVEL == 'word_piece':
 
     it_tokenizer = Tokenizer.from_file(os.path.join(CACHE_DIR,"it_tokenizer.json"))
     eng_tokenizer = Tokenizer.from_file(os.path.join(CACHE_DIR,"eng_tokenizer.json"))
-    TOKENIZER_ENC = eng_tokenizer.encode()
-    TOKENIZER_DEC = it_tokenizer.encode()
+
+    def custom_it_tokenizer(sentence):
+        return it_tokenizer.encode(sentence).tokens
+    
+    def custom_eng_tokenizer(sentence):
+        return eng_tokenizer.encode(sentence).tokens
+    
+    TOKENIZER_ENC = custom_eng_tokenizer
+    TOKENIZER_DEC = custom_it_tokenizer
 
     english_vocabulary = eng_tokenizer.get_vocab()
     italian_vocabulary = it_tokenizer.get_vocab()
