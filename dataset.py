@@ -257,4 +257,5 @@ class TextDataset(Dataset):
     def __getitem__(self, idx):
         return self.english_sentences[idx], self.italian_sentences[idx]
     
-dataset = Te
+dataset = TextDataset(english_sentences, italian_sentences)
+
