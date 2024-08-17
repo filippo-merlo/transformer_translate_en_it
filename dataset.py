@@ -13,6 +13,7 @@ PADDING_TOKEN = '<PADDING>'
 END_TOKEN = '<END>'
 
 TOTAL_SENTENCES = 203000
+TRAINING_SENTENCES = 200000
 
 TOKENIZATION_LEVEL = 'word'
 
@@ -79,7 +80,7 @@ if TOKENIZATION_LEVEL == 'character':
 
     # Filter out sentences that are too long or have invalid tokens
     valid_sentence_indicies = []
-    for index in range(len(italian_sentences)):
+    for index in range(TRAINING_SENTENCES):
         italian_sentence, english_sentence = italian_sentences[index], english_sentences[index]
         if is_valid_length(italian_sentence, max_sequence_length)\
         and is_valid_length(english_sentence, max_sequence_length)\
@@ -166,7 +167,7 @@ elif TOKENIZATION_LEVEL == 'word':
 
     # Filter out sentences that are too long or have invalid tokens
     valid_sentence_indicies = []
-    for index in tqdm(range(len(italian_sentences))):
+    for index in tqdm(range(TRAINING_SENTENCES)):
         italian_sentence, english_sentence = italian_sentences[index], english_sentences[index]
         if is_valid_length(italian_sentence, max_sequence_length) \
         and is_valid_length(english_sentence, max_sequence_length):
@@ -228,7 +229,7 @@ elif TOKENIZATION_LEVEL == 'word_piece':
 
     # Filter out sentences that are too long or have invalid tokens
     valid_sentence_indicies = []
-    for index in tqdm(range(len(italian_sentences))):
+    for index in tqdm(range(TRAINING_SENTENCES)):
         italian_sentence, english_sentence = italian_sentences[index], english_sentences[index]
         if is_valid_length(italian_sentence, max_sequence_length) \
         and is_valid_length(english_sentence, max_sequence_length):
@@ -254,5 +255,5 @@ class TextDataset(Dataset):
     def __getitem__(self, idx):
         return self.english_sentences[idx], self.italian_sentences[idx]
     
-dataset = TextDataset(english_sentences[:200000], italian_sentences[:200000])
+dataset = TextDataset(english_sentences, italian_sentences)
 
