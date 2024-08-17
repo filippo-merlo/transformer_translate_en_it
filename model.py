@@ -92,7 +92,6 @@ class SentenceEmbedding(nn.Module):
         tokenized = []
         for sentence_num in range(len(batch)):
            tokenized.append(tokenize(batch[sentence_num], start_token, end_token))
-           print(tokenized)
         
         # Stack all tokenized sentences into a single tensor and move to the appropriate device
         tokenized = torch.stack(tokenized)

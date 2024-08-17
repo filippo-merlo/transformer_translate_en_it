@@ -152,6 +152,8 @@ for epoch in range(num_epochs):
 
         #train_losses.append(loss.item())
         if batch_num % 100 == 0:
+            print(labels)
+            print(it_predictions)
             print(f"Iteration {batch_num} : {loss.item()}")
             print(f"English: {eng_batch[0]}")
             print(f"Italian Translation: {it_batch[0]}")
