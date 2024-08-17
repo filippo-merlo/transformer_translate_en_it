@@ -141,6 +141,7 @@ for epoch in range(num_epochs):
                                      dec_start_token=True,
                                      dec_end_token=True)
         labels = transformer.decoder.sentence_embedding.batch_tokenize(it_batch, start_token=False, end_token=True)
+        print('labels shape', labels.shape)
         loss = criterion(
             it_predictions.view(-1, it_vocab_size).to(device),
             labels.view(-1).to(device)
@@ -156,8 +157,7 @@ for epoch in range(num_epochs):
             print(f"English: {eng_batch[0]}")
             print(f"Italian Translation: {it_batch[0]}")
             it_sentence_predicted = torch.argmax(it_predictions[0], axis=1)
-            #print(it_sentence_predicted)
-            #print(labels[0])
+
             lab_sentence = ""
             if TOKENIZATION_LEVEL == 'word_piece':
                 ids_sentence = []
@@ -172,6 +172,7 @@ for epoch in range(num_epochs):
                         break
                     lab_sentence += it_index_to_vocabulary[idx.item()]
             print(lab_sentence)
+
             predicted_sentence = ""
             if TOKENIZATION_LEVEL == 'word_piece':
                 ids_sentence = []
