@@ -14,7 +14,7 @@ END_TOKEN = '<END>'
 
 TOTAL_SENTENCES = 203000
 
-TOKENIZATION_LEVEL = 'word_piece'
+TOKENIZATION_LEVEL = 'word'
 
 if TOKENIZATION_LEVEL == 'character':
     TOKENIZER_ENC = None
@@ -148,6 +148,14 @@ elif TOKENIZATION_LEVEL == 'word':
 
     it_vocabulary_to_index = {v:k for k,v in enumerate(italian_vocabulary)}
     en_vocabulary_to_index = {v:k for k,v in enumerate(english_vocabulary)}
+
+    import json
+    import os
+    with open(os.path.join(CACHE_DIR, 'it_vocabulary_to_index_word.json'), 'w') as json_file:
+        json.dump(it_vocabulary_to_index, json_file)
+    with open(os.path.join(CACHE_DIR, 'en_vocabulary_to_index_word.json'), 'w') as json_file:
+        json.dump(en_vocabulary_to_index, json_file)
+    
 
     # set max sequence length and filter out sentences that are too long or have invalid tokens
     max_sequence_length = 200
