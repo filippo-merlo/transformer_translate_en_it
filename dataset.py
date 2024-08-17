@@ -201,7 +201,7 @@ elif TOKENIZATION_LEVEL == 'word_piece':
         example = next(dataset_iter)
         italian_sentences.append(example['translation']['it'].lower())
         english_sentences.append(example['translation']['en'].lower())
-    
+        
     # Get index to character and character to index mappings
     it_index_to_vocabulary = {k:v for k,v in italian_vocabulary.items()}
     en_index_to_vocabulary = {k:v for k,v in english_vocabulary.items()}
