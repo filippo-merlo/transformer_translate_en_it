@@ -157,21 +157,6 @@ for epoch in range(num_epochs):
             print(f"Italian Translation: {it_batch[0]}")
             it_sentence_predicted = torch.argmax(it_predictions[0], axis=1)
 
-            lab_sentence = ""
-            if TOKENIZATION_LEVEL == 'word_piece':
-                ids_sentence = []
-                for idx in labels[0]:
-                    ids_sentence.append(idx)
-                    if it_tokenizer.decode([idx]) == END_TOKEN:
-                        break
-                lab_sentence = it_tokenizer.decode(ids_sentence)
-            else:
-                for idx in labels[0]:
-                    if idx == it_vocabulary_to_index[END_TOKEN]:
-                        break
-                    lab_sentence += it_index_to_vocabulary[idx.item()]
-            print(lab_sentence)
-
             predicted_sentence = ""
             if TOKENIZATION_LEVEL == 'word_piece':
                 ids_sentence = []
@@ -186,7 +171,7 @@ for epoch in range(num_epochs):
                         break
                     predicted_sentence += it_index_to_vocabulary[idx.item()]
             print(f"Italian Prediction: {predicted_sentence}")
-'''
+
             transformer.eval()
             it_sentence = ("", )
             it_ids = []
@@ -221,4 +206,3 @@ for epoch in range(num_epochs):
 import os
 model_save_path = os.path.join(MODEL_PATH,f"transformer_model_{TOKENIZATION_LEVEL}_level_tok.pth")
 torch.save(transformer.state_dict(), model_save_path)
-'''
