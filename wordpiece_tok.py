@@ -10,7 +10,7 @@ dataset_iter = iter(ds['train'])
 
 # Get subset of sentences from dataset: 200000
 from tqdm import tqdm 
-TOTAL_SENTENCES = 23000
+TOTAL_SENTENCES = 203000
 scores = []
 english_sentences = []
 italian_sentences = []
