@@ -14,7 +14,7 @@ END_TOKEN = '<END>'
 
 TOTAL_SENTENCES = 200000
 
-TOKENIZATION_LEVEL = 'word_piece'
+TOKENIZATION_LEVEL = 'character'
 
 if TOKENIZATION_LEVEL == 'character':
     TOKENIZER_ENC = None
