@@ -157,6 +157,7 @@ for epoch in range(num_epochs):
             print(f"Italian Translation: {it_batch[0]}")
             it_sentence_predicted = torch.argmax(it_predictions[0], axis=1)
             print(it_sentence_predicted)
+            print(torch.argmax(labels[0], axis=1))
             predicted_sentence = ""
             if TOKENIZATION_LEVEL == 'word_piece':
                 ids_sentence = []
