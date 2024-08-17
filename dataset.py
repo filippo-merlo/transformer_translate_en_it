@@ -205,6 +205,9 @@ elif TOKENIZATION_LEVEL == 'word_piece':
     it_vocabulary_to_index = it_tokenizer.get_vocab()
     en_vocabulary_to_index = eng_tokenizer.get_vocab()
 
+    italian_vocabulary = list(it_vocabulary_to_index.keys())
+    english_vocabulary = list(en_vocabulary_to_index.keys())
+
     it_index_to_vocabulary = {k:v for k,v in it_vocabulary_to_index.items()}
     en_index_to_vocabulary = {k:v for k,v in en_vocabulary_to_index.items()}
 
