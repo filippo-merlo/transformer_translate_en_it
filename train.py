@@ -208,18 +208,4 @@ for epoch in range(num_epochs):
                 if TOKENIZATION_LEVEL == 'word_piece':
                     if it_tokenizer.decode([next_token_index]) == END_TOKEN:
                         break
-                    it_ids.append(next_token_index)
-                    it_sentence = (it_tokenizer.decode(it_ids), )
-                else:
-                    next_token = it_index_to_vocabulary[next_token_index]
-                    if next_token == END_TOKEN:
-                        break
-                    it_sentence = (it_sentence[0] + next_token, )
-
-            print(f"Evaluation translation (should we go to the mall?) : {it_sentence}")
-            print("-------------------------------------------")
-            
-import os
-model_save_path = os.path.join(MODEL_PATH,f"transformer_model_{TOKENIZATION_LEVEL}_level_tok.pth")
-torch.save(transformer.state_dict(), model_save_path)
-'''
+                    it_ids.append(n
