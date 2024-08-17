@@ -152,58 +152,60 @@ for epoch in range(num_epochs):
 
         #train_losses.append(loss.item())
         if batch_num % 100 == 0:
-            print(f"Iteration {batch_num} : {loss.item()}")
-            print(f"English: {eng_batch[0]}")
-            print(f"Italian Translation: {it_batch[0]}")
-            it_sentence_predicted = torch.argmax(it_predictions[0], axis=1)
+            try:
+                print(f"Iteration {batch_num} : {loss.item()}")
+                print(f"English: {eng_batch[0]}")
+                print(f"Italian Translation: {it_batch[0]}")
+                it_sentence_predicted = torch.argmax(it_predictions[0], axis=1)
 
-            predicted_sentence = ""
-            if TOKENIZATION_LEVEL == 'word_piece':
-                ids_sentence = []
-                for idx in it_sentence_predicted:
-                    ids_sentence.append(idx)
-                    if it_tokenizer.decode([idx]) == END_TOKEN:
-                        break
-                predicted_sentence = it_tokenizer.decode(ids_sentence)
-            else:
-                for idx in it_sentence_predicted:
-                    if idx == it_vocabulary_to_index[END_TOKEN]:
-                        break
-                    predicted_sentence += it_index_to_vocabulary[idx.item()]
-            print(f"Italian Prediction: {predicted_sentence}")
-
-            transformer.eval()
-            it_sentence = ("", )
-            it_ids = []
-            #eng_sentence = ("should we go to the mall?",)
-            eng_sentence = (" ",)
-
-            for word_counter in range(max_sequence_length):
-                encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask= create_masks(eng_sentence, it_sentence, TOKENIZER_ENC, TOKENIZER_DEC)
-                predictions = transformer(eng_sentence,
-                                        it_sentence,
-                                        encoder_self_attention_mask.to(device), 
-                                        decoder_self_attention_mask.to(device), 
-                                        decoder_cross_attention_mask.to(device),
-                                        enc_start_token=False,
-                                        enc_end_token=False,
-                                        dec_start_token=True,
-                                        dec_end_token=False)
-                next_token_prob_distribution = predictions[0][word_counter] # not actual probs
-                next_token_index = torch.argmax(next_token_prob_distribution).item()
+                predicted_sentence = ""
                 if TOKENIZATION_LEVEL == 'word_piece':
-                    if it_tokenizer.decode([next_token_index]) == END_TOKEN:
-                        break
-                    it_ids.append(next_token_index)
-                    it_sentence = (it_tokenizer.decode(it_ids), )
+                    ids_sentence = []
+                    for idx in it_sentence_predicted:
+                        ids_sentence.append(idx)
+                        if it_tokenizer.decode([idx]) == END_TOKEN:
+                            break
+                    predicted_sentence = it_tokenizer.decode(ids_sentence)
                 else:
-                    next_token = it_index_to_vocabulary[next_token_index]
-                    if next_token == END_TOKEN:
-                        break
-                    it_sentence = (it_sentence[0] + next_token, )
+                    for idx in it_sentence_predicted:
+                        if idx == it_vocabulary_to_index[END_TOKEN]:
+                            break
+                        predicted_sentence += it_index_to_vocabulary[idx.item()]
+                print(f"Italian Prediction: {predicted_sentence}")
 
-            print(f"Evaluation translation (should we go to the mall?) : {it_sentence}")
-            print("-------------------------------------------")
+                transformer.eval()
+                it_sentence = ("", )
+                it_ids = []
+                eng_sentence = ("should we go to the mall?",)
+
+                for word_counter in range(max_sequence_length):
+                    encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask= create_masks(eng_sentence, it_sentence, TOKENIZER_ENC, TOKENIZER_DEC)
+                    predictions = transformer(eng_sentence,
+                                            it_sentence,
+                                            encoder_self_attention_mask.to(device), 
+                                            decoder_self_attention_mask.to(device), 
+                                            decoder_cross_attention_mask.to(device),
+                                            enc_start_token=False,
+                                            enc_end_token=False,
+                                            dec_start_token=True,
+                                            dec_end_token=False)
+                    next_token_prob_distribution = predictions[0][word_counter] # not actual probs
+                    next_token_index = torch.argmax(next_token_prob_distribution).item()
+                    if TOKENIZATION_LEVEL == 'word_piece':
+                        if it_tokenizer.decode([next_token_index]) == END_TOKEN:
+                            break
+                        it_ids.append(next_token_index)
+                        it_sentence = (it_tokenizer.decode(it_ids), )
+                    else:
+                        next_token = it_index_to_vocabulary[next_token_index]
+                        if next_token == END_TOKEN:
+                            break
+                        it_sentence = (it_sentence[0] + next_token, )
+
+                print(f"Evaluation translation (should we go to the mall?) : {it_sentence}")
+                print("-------------------------------------------")
+            except:
+                print("Error")
             
 import os
 model_save_path = os.path.join(MODEL_PATH,f"transformer_model_{TOKENIZATION_LEVEL}_level_tok.pth")
