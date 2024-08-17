@@ -12,7 +12,7 @@ START_TOKEN = '<START>'
 PADDING_TOKEN = '<PADDING>'
 END_TOKEN = '<END>'
 
-TOTAL_SENTENCES = 200000
+TOTAL_SENTENCES = 203000
 
 TOKENIZATION_LEVEL = 'word_piece'
 
@@ -246,5 +246,5 @@ class TextDataset(Dataset):
     def __getitem__(self, idx):
         return self.english_sentences[idx], self.italian_sentences[idx]
     
-dataset = TextDataset(english_sentences, italian_sentences)
+dataset = TextDataset(english_sentences[:200000], italian_sentences[:200000])
 
