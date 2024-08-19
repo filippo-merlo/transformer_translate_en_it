@@ -283,10 +283,13 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
          if next_token == END_TOKEN:
             break
          splitted_sentence = it_sentence[0].split()
-         if splitted_sentence[-1] + next_token not in it_vocabulary_to_index.keys():
-            it_sentence = (it_sentence[0] + ' ' + next_token, )
-         else:
-          it_sentence = (it_sentence[0] + next_token, )
+         try:
+          if splitted_sentence[-1] + next_token not in it_vocabulary_to_index.keys():
+              it_sentence = (it_sentence[0] + ' ' + next_token, )
+          else:
+            it_sentence = (it_sentence[0] + next_token, )
+         except:
+            it_sentence = (it_sentence[0] + next_token, )
       else:
         next_token = it_index_to_vocabulary[next_token_index]
         if next_token == END_TOKEN:
