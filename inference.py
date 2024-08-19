@@ -292,7 +292,6 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
               it_sentence = (it_sentence[0] + next_token, )
           if len(it_sentence[0]) >= 200:
               break
-          
       else:
         next_token = it_index_to_vocabulary[next_token_index]
         if next_token == END_TOKEN:
