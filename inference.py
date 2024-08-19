@@ -287,6 +287,8 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
   def bleu_score(pred_sentences, it_sentences):
     blue_scores = []
     for pred_sentence, it_sentence in tqdm(zip(pred_sentences, it_sentences)):
+      print(it_sentence)
+      print(pred_sentence)
       pred_sentence = pred_sentence.split()
       it_sentence = it_sentence.split()
       score = sentence_bleu([pred_sentence], it_sentence, smoothing_function=smoothie)
