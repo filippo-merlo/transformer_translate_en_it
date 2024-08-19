@@ -4,7 +4,7 @@ import numpy as np
 from config import *
 from model import *
 import os 
-import tqdm
+from tqdm import tqdm
 
 # A large negative constant used to represent negative infinity in mask calculations.
 NEG_INFTY = -1e9
