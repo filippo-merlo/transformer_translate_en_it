@@ -79,7 +79,12 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
                     result.append(sentence[i])
                     i += 1
             return result
-
+    import itertools
+    def custom_tokenizer(sentence):
+        ll = [[word_tokenize(w), ' '] for w in sentence.split()]
+        spaced_token_list = list(itertools.chain(*list(itertools.chain(*ll))))[:-1]
+        return spaced_token_list
+    
     TOKENIZER_ENC = custom_tokenizer
     TOKENIZER_DEC = custom_tokenizer
 
