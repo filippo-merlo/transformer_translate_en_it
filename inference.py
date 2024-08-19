@@ -95,6 +95,9 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
     italian_vocabulary = list(it_vocabulary_to_index.keys())
     english_vocabulary = list(en_vocabulary_to_index.keys())
 
+    it_index_to_vocabulary = {k:v for k,v in it_vocabulary_to_index.items()}
+    en_index_to_vocabulary = {k:v for k,v in en_vocabulary_to_index.items()}
+
     # set max sequence length and filter out sentences that are too long or have invalid tokens
     max_sequence_length = 200
 
