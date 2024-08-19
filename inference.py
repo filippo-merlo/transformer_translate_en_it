@@ -85,10 +85,12 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
 
     import json
     with open(os.path.join(CACHE_DIR, 'it_vocabulary_to_index_word.json'), 'r') as json_file:
-        italian_vocabulary = json.load(json_file)
+        it_vocabulary_to_index = json.load(json_file)
+        print('Italian Vocabulary to Index',len(it_vocabulary_to_index))
 
-    with open(os.path.join(CACHE_DIR, 'en_vocabulary_to_index_word.json'), 'w') as json_file:
-          english_vocabulary = json.load(json_file)
+    with open(os.path.join(CACHE_DIR, 'en_vocabulary_to_index_word.json'), 'r') as json_file:
+        en_vocabulary_to_index = json.load(json_file)
+        print('English Vocabulary to Index',len(en_vocabulary_to_index))
     
     # set max sequence length and filter out sentences that are too long or have invalid tokens
     max_sequence_length = 200
@@ -131,7 +133,9 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
     # Get index to character and character to index mappings
 
     it_vocabulary_to_index = it_tokenizer.get_vocab()
+    print('Italian Vocabulary to Index',len(it_vocabulary_to_index))
     en_vocabulary_to_index = eng_tokenizer.get_vocab()
+    print('English Vocabulary to Index',len(en_vocabulary_to_index))
 
     italian_vocabulary = list(it_vocabulary_to_index.keys())
     english_vocabulary = list(en_vocabulary_to_index.keys())
@@ -159,7 +163,6 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
 
     italian_sentences = [italian_sentences[i] for i in valid_sentence_indicies]
     english_sentences = [english_sentences[i] for i in valid_sentence_indicies]
-
 
   device = torch.device("cuda")
   max_sequence_length = 200
@@ -301,13 +304,13 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
     if len(english_sentence) <= 50:
       target_sentences_l50.append(italian_sentences[i])
       predicted_sentences_l50.append(translate(english_sentence))
-    elif len(english_sentence) <= 100:
+    elif len(english_sentence) <= 100 and len(english_sentence) > 50:
       target_sentences_l100.append(italian_sentences[i])
       predicted_sentences_l100.append(translate(english_sentence))
-    elif len(english_sentence) <= 150:
+    elif len(english_sentence) <= 150 and len(english_sentence) > 100:
       target_sentences_l150.append(italian_sentences[i])
       predicted_sentences_l150.append(translate(english_sentence))
-    else:
+    elif len(english_sentence) > 150 and len(english_sentence) <= 200:
       target_sentences_l200.append(italian_sentences[i])
       predicted_sentences_l200.append(translate(english_sentence))
 
