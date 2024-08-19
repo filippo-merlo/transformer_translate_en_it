@@ -94,7 +94,7 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
     
     italian_vocabulary = list(it_vocabulary_to_index.keys())
     english_vocabulary = list(en_vocabulary_to_index.keys())
-    
+
     # set max sequence length and filter out sentences that are too long or have invalid tokens
     max_sequence_length = 200
 
@@ -247,7 +247,7 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
       return encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask
 
   import time
-  def translate(eng_sentence, max_sequence_length = 200):
+  def translate(eng_sentence, max_sequence_length = 200, it_vocabulary_to_index = it_vocabulary_to_index):
     eng_sentence = (eng_sentence,)
     it_sentence = ("", )
     it_ids = []
