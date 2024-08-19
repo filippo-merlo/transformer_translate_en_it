@@ -279,7 +279,7 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
         it_sentence = (it_sentence[0] + next_token, )
       print(eng_sentence)
       print(it_sentence[0])
-    return it_sentence[0], time_score
+    return it_sentence[0], np.mean(time_score)
      
   # compute BLEU SCORE
   from nltk.translate.bleu_score import sentence_bleu
