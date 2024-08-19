@@ -307,6 +307,8 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
   def bleu_score(pred_sentences, it_sentences):
     blue_scores = []
     for pred_sentence, it_sentence in tqdm(zip(pred_sentences, it_sentences)):
+      print('Target sentence:', it_sentence)
+      print('Predicted sentence:', pred_sentence)
       pred_sentence = pred_sentence.split()
       it_sentence = it_sentence.split()
       score = sentence_bleu([pred_sentence], it_sentence, smoothing_function=smoothie)
@@ -365,7 +367,7 @@ PADDING_TOKEN = '<PADDING>'
 END_TOKEN = '<END>'
 
 TOTAL_SENTENCES = 203000
-TRAINING_SENTENCES = 200000
+TRAINING_SENTENCES = 202990
 italian_sentences = []
 english_sentences = []
 for i in tqdm(range(TOTAL_SENTENCES)):
