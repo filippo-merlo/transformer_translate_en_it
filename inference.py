@@ -243,12 +243,15 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
       # Return the computed attention masks for the encoder and decoder
       return encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask
 
+  import time
   def translate(eng_sentence, max_sequence_length = 200):
     eng_sentence = (eng_sentence,)
     it_sentence = ("", )
     it_ids = []
+    time_score = []
     for word_counter in range(max_sequence_length):
       encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask= create_masks(eng_sentence, it_sentence)
+      start_time = time.time()
       predictions = transformer(eng_sentence,
                                 it_sentence,
                                 encoder_self_attention_mask.to(device), 
@@ -258,7 +261,10 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
                                 enc_end_token=False,
                                 dec_start_token=True,
                                 dec_end_token=False)
-      
+      end_time = time.time()
+      elapsed_time = end_time - start_time
+      time_score.append(elapsed_time)
+
       next_token_prob_distribution = predictions[0][word_counter]
       next_token_index = torch.argmax(next_token_prob_distribution).item()
       if TOKENIZATION_LEVEL == 'word_piece':
@@ -271,7 +277,7 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
         if next_token == END_TOKEN:
           break
         it_sentence = (it_sentence[0] + next_token, )
-    return it_sentence[0]
+    return it_sentence[0], time_score
      
   # compute BLEU SCORE
   from nltk.translate.bleu_score import sentence_bleu
@@ -297,29 +303,38 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
   target_sentences_l200 = []
   predicted_sentences_l200 = []
   
-
+  time_score = []
   for i in tqdm(range(len(english_sentences))):
-
     english_sentence = english_sentences[i]
     if len(english_sentence) <= 50:
       target_sentences_l50.append(italian_sentences[i])
-      predicted_sentences_l50.append(translate(english_sentence))
+      pred_sentece, pred_avg_time = translate(english_sentence)
+      time_score.append(pred_avg_time)
+      predicted_sentences_l50.append(pred_sentece)
     elif len(english_sentence) <= 100 and len(english_sentence) > 50:
       target_sentences_l100.append(italian_sentences[i])
-      predicted_sentences_l100.append(translate(english_sentence))
+      pred_sentece, pred_avg_time = translate(english_sentence)
+      time_score.append(pred_avg_time)
+      predicted_sentences_l100.append(pred_sentece)
     elif len(english_sentence) <= 150 and len(english_sentence) > 100:
       target_sentences_l150.append(italian_sentences[i])
-      predicted_sentences_l150.append(translate(english_sentence))
+      pred_sentece, pred_avg_time = translate(english_sentence)
+      time_score.append(pred_avg_time)
+      predicted_sentences_l150.append(pred_sentece)
     elif len(english_sentence) > 150 and len(english_sentence) <= 200:
       target_sentences_l200.append(italian_sentences[i])
-      predicted_sentences_l200.append(translate(english_sentence))
-
+      pred_sentece, pred_avg_time = translate(english_sentence)
+      time_score.append(pred_avg_time)
+      predicted_sentences_l200.append(pred_sentece)
+    
   score_mean_l50 = bleu_score(predicted_sentences_l50, target_sentences_l50)
   score_mean_l100 = bleu_score(predicted_sentences_l100, target_sentences_l100)
   score_mean_l150 = bleu_score(predicted_sentences_l150, target_sentences_l150)
   score_mean_l200 = bleu_score(predicted_sentences_l200, target_sentences_l200)
 
-  return score_mean_l50, score_mean_l100, score_mean_l150, score_mean_l200
+  mean_time = np.mean(time_score)
+
+  return score_mean_l50, score_mean_l100, score_mean_l150, score_mean_l200, mean_time
 
 
 #%% GET THE DATA
@@ -347,14 +362,15 @@ for i in tqdm(range(TOTAL_SENTENCES)):
         italian_sentences.append(example['translation']['it'].lower())
         english_sentences.append(example['translation']['en'].lower())
           
-tokenization_levels = ['word_piece','character','word']
+tokenization_levels = ['character','word_piece','word']
 
 for tokenization_level in tokenization_levels:
   print(tokenization_level)
-  score_mean_l50, score_mean_l100, score_mean_l150, score_mean_l200 = predict(tokenization_level,english_sentences,italian_sentences,START_TOKEN,PADDING_TOKEN,END_TOKEN)
+  score_mean_l50, score_mean_l100, score_mean_l150, score_mean_l200, mean_time = predict(tokenization_level,english_sentences,italian_sentences,START_TOKEN,PADDING_TOKEN,END_TOKEN)
   print(f"Tokenization Level: {tokenization_level}")
   print(f"Score Mean L50: {score_mean_l50}")
   print(f"Score Mean L100: {score_mean_l100}")
   print(f"Score Mean L150: {score_mean_l150}")
   print(f"Score Mean L200: {score_mean_l200}")
+  print(f"Mean Time: {mean_time}")
   print("\n")
