@@ -367,7 +367,7 @@ PADDING_TOKEN = '<PADDING>'
 END_TOKEN = '<END>'
 
 TOTAL_SENTENCES = 203000
-TRAINING_SENTENCES = 202990
+TRAINING_SENTENCES = 202995
 italian_sentences = []
 english_sentences = []
 for i in tqdm(range(TOTAL_SENTENCES)):
