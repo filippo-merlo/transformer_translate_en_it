@@ -247,7 +247,7 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
       return encoder_self_attention_mask, decoder_self_attention_mask, decoder_cross_attention_mask
 
   import time
-  def translate(eng_sentence, max_sequence_length = 200, it_vocabulary_to_index = it_vocabulary_to_index):
+  def translate(eng_sentence, max_sequence_length = 200):
     eng_sentence = (eng_sentence,)
     it_sentence = ("", )
     it_ids = []
@@ -367,7 +367,7 @@ for i in tqdm(range(TOTAL_SENTENCES)):
         italian_sentences.append(example['translation']['it'].lower())
         english_sentences.append(example['translation']['en'].lower())
           
-tokenization_levels = ['word','character','word_piece']
+tokenization_levels = ['character','word','word_piece']
 
 for tokenization_level in tokenization_levels:
   print(tokenization_level)
