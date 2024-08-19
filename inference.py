@@ -321,8 +321,6 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
   predicted_sentences_l100 = []
   target_sentences_l150 = []
   predicted_sentences_l150 = []
-  target_sentences_l200 = []
-  predicted_sentences_l200 = []
   
   time_score = []
   for i in tqdm(range(len(english_sentences))):
@@ -338,24 +336,17 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
         pred_sentece, pred_avg_time = translate(english_sentence)
         time_score.append(pred_avg_time)
         predicted_sentences_l100.append(pred_sentece)
-      elif len(english_sentence) <= 150 and len(english_sentence) > 100:
+      elif len(english_sentence) > 100:
         target_sentences_l150.append(italian_sentences[i])
         pred_sentece, pred_avg_time = translate(english_sentence)
         time_score.append(pred_avg_time)
         predicted_sentences_l150.append(pred_sentece)
-      elif len(english_sentence) > 150:
-        print('ok')
-        target_sentences_l200.append(italian_sentences[i])
-        pred_sentece, pred_avg_time = translate(english_sentence)
-        time_score.append(pred_avg_time)
-        predicted_sentences_l200.append(pred_sentece)
     except:
       pass
     
   score_mean_l50 = bleu_score(predicted_sentences_l50, target_sentences_l50)
   score_mean_l100 = bleu_score(predicted_sentences_l100, target_sentences_l100)
   score_mean_l150 = bleu_score(predicted_sentences_l150, target_sentences_l150)
-  score_mean_l200 = bleu_score(predicted_sentences_l200, target_sentences_l200)
 
   mean_time = np.mean(time_score)
 
@@ -375,8 +366,7 @@ PADDING_TOKEN = '<PADDING>'
 END_TOKEN = '<END>'
 
 TOTAL_SENTENCES = 203000
-TRAINING_SENTENCES = 202900
-
+TRAINING_SENTENCES = 200000
 italian_sentences = []
 english_sentences = []
 for i in tqdm(range(TOTAL_SENTENCES)):
