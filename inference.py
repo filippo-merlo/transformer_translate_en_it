@@ -343,7 +343,7 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
         pred_sentece, pred_avg_time = translate(english_sentence)
         time_score.append(pred_avg_time)
         predicted_sentences_l150.append(pred_sentece)
-      elif len(english_sentence) > 150 and len(english_sentence) <= 200:
+      elif len(english_sentence) > 150:
         print('ok')
         target_sentences_l200.append(italian_sentences[i])
         pred_sentece, pred_avg_time = translate(english_sentence)
