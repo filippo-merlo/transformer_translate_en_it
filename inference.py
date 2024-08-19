@@ -347,6 +347,7 @@ for i in tqdm(range(TOTAL_SENTENCES)):
 tokenization_levels = ['word_piece','character','word']
 
 for tokenization_level in tokenization_levels:
+  print(tokenization_level)
   score_mean_l50, score_mean_l100, score_mean_l150, score_mean_l200 = predict(tokenization_level,english_sentences,italian_sentences,START_TOKEN,PADDING_TOKEN,END_TOKEN)
   print(f"Tokenization Level: {tokenization_level}")
   print(f"Score Mean L50: {score_mean_l50}")
