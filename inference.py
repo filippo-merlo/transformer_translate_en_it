@@ -364,7 +364,7 @@ for i in tqdm(range(TOTAL_SENTENCES)):
         italian_sentences.append(example['translation']['it'].lower())
         english_sentences.append(example['translation']['en'].lower())
           
-tokenization_levels = ['character','word_piece','word']
+tokenization_levels = ['word','character','word_piece']
 
 for tokenization_level in tokenization_levels:
   print(tokenization_level)
