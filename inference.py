@@ -1,231 +1,10 @@
+#%%
 import torch 
 import numpy as np
 from config import *
 from model import *
 import os 
 import tqdm
-#%% GET THE DATA
-# Load the dataset
-from datasets import load_dataset
-ds = load_dataset("yhavinga/ccmatrix", "en-it", cache_dir=CACHE_DIR)
-dataset_iter = iter(ds['train'])
-
-# Define vocabulary
-# 1 Character based tokenization
-START_TOKEN = '<START>'
-PADDING_TOKEN = '<PADDING>'
-END_TOKEN = '<END>'
-
-TOTAL_SENTENCES = 203000
-TRAINING_SENTENCES = 200000
-
-italian_sentences = []
-english_sentences = []
-for i in tqdm(range(TOTAL_SENTENCES)):
-      if i <= TRAINING_SENTENCES:
-          continue
-      else:
-        example = next(dataset_iter)
-        italian_sentences.append(example['translation']['it'].lower())
-        english_sentences.append(example['translation']['en'].lower())
-          
-
-TOKENIZATION_LEVEL = 'word'
-
-if TOKENIZATION_LEVEL == 'character':
-  TOKENIZER_ENC = None
-  TOKENIZER_DEC = None
-  italian_vocabulary = [
-      START_TOKEN, ' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', '–','—',
-      '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
-      ':', '<', '=', '>', '?', '@', ';', 
-      '[', '\\', ']', '^', '_', '`', '‘', '’', '“', '”', '…', '«', '»',
-      'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'l', 
-      'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'z', 
-      'j', 'k', 'w', 'x', 'y', 
-      'à', 'é', 'è', 'ì', 'ò', 'ù',
-      '{', '|', '}', '~', PADDING_TOKEN, END_TOKEN
-  ]
-
-  # Get index to character and character to index mappings
-  it_index_to_vocabulary = {k:v for k,v in enumerate(italian_vocabulary)}
-  en_index_to_vocabulary = {k:v for k,v in enumerate(italian_vocabulary)}
-
-  it_vocabulary_to_index = {v:k for k,v in enumerate(italian_vocabulary)}
-  en_vocabulary_to_index = {v:k for k,v in enumerate(italian_vocabulary)}
-
-  # set max sequence length and filter out sentences that are too long or have invalid tokens
-  max_sequence_length = 200
-
-  # All tokens in the sentence are in the vocabulary
-  def is_valid_tokens(sentence, vocab):
-      for token in list(set(sentence)):
-          if token not in vocab:
-              return False
-      return True
-
-  # The sentence is less than the max sequence length
-  def is_valid_length(sentence, max_sequence_length):
-      return len(list(sentence)) < (max_sequence_length - 1) # need to re-add the end token so leaving 1 space
-
-  # Filter out sentences that are too long or have invalid tokens
-  valid_sentence_indicies = []
-  for index in range(len(italian_sentences)):
-      italian_sentence, english_sentence = italian_sentences[index], english_sentences[index]
-      if is_valid_length(italian_sentence, max_sequence_length)\
-      and is_valid_length(english_sentence, max_sequence_length)\
-      and is_valid_tokens(italian_sentence, italian_vocabulary)\
-      and is_valid_tokens(english_sentence, italian_vocabulary):
-          valid_sentence_indicies.append(index)
-
-  print(f"Number of sentences: {len(italian_sentences)}")
-  print(f"Number of valid sentences: {len(valid_sentence_indicies)}")
-
-
-  italian_sentences = [italian_sentences[i] for i in valid_sentence_indicies]
-  english_sentences = [english_sentences[i] for i in valid_sentence_indicies]
-      
-elif TOKENIZATION_LEVEL == 'word':
-  import nltk 
-  from nltk.tokenize import word_tokenize
-  nltk.download('punkt_tab')
-
-  def custom_tokenizer(sentence):
-          sentence = sentence.replace(' ', "<SPACE>")
-          sentence = word_tokenize(sentence)
-          i = 0
-          result = []
-          while i < len(sentence):
-              if sentence[i:i+3] == ['<', 'SPACE', '>']:
-                  result.append(' ')
-                  i += 3  # Skip the next two elements
-              else:
-                  result.append(sentence[i])
-                  i += 1
-          return result
-
-  TOKENIZER_ENC = custom_tokenizer
-  TOKENIZER_DEC = custom_tokenizer
-
-  import json
-  with open(os.path.join(CACHE_DIR, 'it_vocabulary_to_index_word.json'), 'r') as json_file:
-      italian_vocabulary = json.load(json_file)
-
-  with open(os.path.join(CACHE_DIR, 'en_vocabulary_to_index_word.json'), 'w') as json_file:
-        english_vocabulary = json.load(json_file)
-  
-  # set max sequence length and filter out sentences that are too long or have invalid tokens
-  max_sequence_length = 200
-
-  # The sentence is less than the max sequence length
-  def is_valid_length(sentence, max_sequence_length):
-      return len(list(sentence)) < (max_sequence_length - 1) # need to re-add the end token so leaving 1 space
-
-  # Filter out sentences that are too long or have invalid tokens
-  valid_sentence_indicies = []
-  for index in tqdm(range(len(italian_sentences))):
-      italian_sentence, english_sentence = italian_sentences[index], english_sentences[index]
-      if is_valid_length(italian_sentence, max_sequence_length) \
-      and is_valid_length(english_sentence, max_sequence_length):
-          valid_sentence_indicies.append(index)
-
-  print(f"Number of sentences: {len(italian_sentences)}")
-  print(f"Number of valid sentences: {len(valid_sentence_indicies)}")
-
-  italian_sentences = [italian_sentences[i] for i in valid_sentence_indicies]
-  english_sentences = [english_sentences[i] for i in valid_sentence_indicies]
-
-elif TOKENIZATION_LEVEL == 'word_piece':
-
-  from tokenizers import (
-        Tokenizer
-    )
-  import os
-
-  it_tokenizer = Tokenizer.from_file(os.path.join(CACHE_DIR,"it_tokenizer.json"))
-  eng_tokenizer = Tokenizer.from_file(os.path.join(CACHE_DIR,"eng_tokenizer.json"))
-
-  def custom_it_tokenizer(sentence):
-      return it_tokenizer.encode(sentence).tokens
-  
-  def custom_eng_tokenizer(sentence):
-      return eng_tokenizer.encode(sentence).tokens
-  
-  TOKENIZER_ENC = custom_eng_tokenizer
-  TOKENIZER_DEC = custom_it_tokenizer
-
-
-  from tqdm import tqdm 
-  english_sentences = []
-  italian_sentences = []
-
-  for _ in tqdm(range(TOTAL_SENTENCES)):
-      example = next(dataset_iter)
-      italian_sentences.append(example['translation']['it'].lower())
-      english_sentences.append(example['translation']['en'].lower())
-
-  # Get index to character and character to index mappings
-
-  it_vocabulary_to_index = it_tokenizer.get_vocab()
-  en_vocabulary_to_index = eng_tokenizer.get_vocab()
-
-  italian_vocabulary = list(it_vocabulary_to_index.keys())
-  english_vocabulary = list(en_vocabulary_to_index.keys())
-
-  it_index_to_vocabulary = {k:v for k,v in it_vocabulary_to_index.items()}
-  en_index_to_vocabulary = {k:v for k,v in en_vocabulary_to_index.items()}
-
-  # set max sequence length and filter out sentences that are too long or have invalid tokens
-  max_sequence_length = 200
-
-  # The sentence is less than the max sequence length
-  def is_valid_length(sentence, max_sequence_length):
-      return len(list(sentence)) < (max_sequence_length - 1) # need to re-add the end token so leaving 1 space
-
-  # Filter out sentences that are too long or have invalid tokens
-  valid_sentence_indicies = []
-  for index in tqdm(range(len(italian_sentences))):
-      italian_sentence, english_sentence = italian_sentences[index], english_sentences[index]
-      if is_valid_length(italian_sentence, max_sequence_length) \
-      and is_valid_length(english_sentence, max_sequence_length):
-          valid_sentence_indicies.append(index)
-
-  print(f"Number of sentences: {len(italian_sentences)}")
-  print(f"Number of valid sentences: {len(valid_sentence_indicies)}")
-
-  italian_sentences = [italian_sentences[i] for i in valid_sentence_indicies]
-  english_sentences = [english_sentences[i] for i in valid_sentence_indicies]
-
-
-device = torch.device("cuda")
-max_sequence_length = 200
-
-d_model = 512
-batch_size = 30
-ffn_hidden = 2048
-num_heads = 8
-drop_prob = 0.1
-num_layers = 1
-max_sequence_length = 200
-it_vocab_size = len(italian_vocabulary)
-
-transformer = Transformer(d_model, 
-                          ffn_hidden,
-                          num_heads, 
-                          drop_prob, 
-                          num_layers, 
-                          max_sequence_length,
-                          it_vocab_size,
-                          en_vocabulary_to_index,
-                          it_vocabulary_to_index,
-                          START_TOKEN, 
-                          END_TOKEN, 
-                          PADDING_TOKEN,
-                          TOKENIZER_ENC,
-                          TOKENIZER_DEC).to(device)
-
-transformer.load_state_dict(torch.load(os.path.join(MODEL_PATH,f"transformer_model_{TOKENIZATION_LEVEL}_level_tok.pth")))
-transformer.eval()
 
 # A large negative constant used to represent negative infinity in mask calculations.
 NEG_INFTY = -1e9
@@ -325,13 +104,268 @@ def blue_score(pred_sentences, it_sentences):
     blue_scores.append(score)
   return np.mean(blue_scores)
 
+#%% GET THE DATA
+# Load the dataset
+from datasets import load_dataset
+ds = load_dataset("yhavinga/ccmatrix", "en-it", cache_dir=CACHE_DIR)
+dataset_iter = iter(ds['train'])
 
-target_sentences = []
-predicted_sentences = []
+# Define vocabulary
+# 1 Character based tokenization
+START_TOKEN = '<START>'
+PADDING_TOKEN = '<PADDING>'
+END_TOKEN = '<END>'
 
-for i in tqdm(range(len(english_sentences))):
-  english_sentence = english_sentences[i]
-  target_sentences.append(italian_sentences[i])
-  predicted_sentences.append(translate(english_sentences[i]))
-score_mean = blue_score(predicted_sentences, target_sentences)
-print(score_mean)
+TOTAL_SENTENCES = 203000
+TRAINING_SENTENCES = 200000
+
+italian_sentences = []
+english_sentences = []
+for i in tqdm(range(TOTAL_SENTENCES)):
+      if i <= TRAINING_SENTENCES:
+          continue
+      else:
+        example = next(dataset_iter)
+        italian_sentences.append(example['translation']['it'].lower())
+        english_sentences.append(example['translation']['en'].lower())
+          
+tokenization_levels = ['character','word_piece','word']
+
+def predict(TOKENIZATION_LEVEL):
+
+  if TOKENIZATION_LEVEL == 'character':
+    TOKENIZER_ENC = None
+    TOKENIZER_DEC = None
+    italian_vocabulary = [
+        START_TOKEN, ' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', '–','—',
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
+        ':', '<', '=', '>', '?', '@', ';', 
+        '[', '\\', ']', '^', '_', '`', '‘', '’', '“', '”', '…', '«', '»',
+        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'l', 
+        'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'z', 
+        'j', 'k', 'w', 'x', 'y', 
+        'à', 'é', 'è', 'ì', 'ò', 'ù',
+        '{', '|', '}', '~', PADDING_TOKEN, END_TOKEN
+    ]
+
+    # Get index to character and character to index mappings
+    it_index_to_vocabulary = {k:v for k,v in enumerate(italian_vocabulary)}
+    en_index_to_vocabulary = {k:v for k,v in enumerate(italian_vocabulary)}
+
+    it_vocabulary_to_index = {v:k for k,v in enumerate(italian_vocabulary)}
+    en_vocabulary_to_index = {v:k for k,v in enumerate(italian_vocabulary)}
+
+    # set max sequence length and filter out sentences that are too long or have invalid tokens
+    max_sequence_length = 200
+
+    # All tokens in the sentence are in the vocabulary
+    def is_valid_tokens(sentence, vocab):
+        for token in list(set(sentence)):
+            if token not in vocab:
+                return False
+        return True
+
+    # The sentence is less than the max sequence length
+    def is_valid_length(sentence, max_sequence_length):
+        return len(list(sentence)) < (max_sequence_length - 1) # need to re-add the end token so leaving 1 space
+
+    # Filter out sentences that are too long or have invalid tokens
+    valid_sentence_indicies = []
+    for index in range(len(italian_sentences)):
+        italian_sentence, english_sentence = italian_sentences[index], english_sentences[index]
+        if is_valid_length(italian_sentence, max_sequence_length)\
+        and is_valid_length(english_sentence, max_sequence_length)\
+        and is_valid_tokens(italian_sentence, italian_vocabulary)\
+        and is_valid_tokens(english_sentence, italian_vocabulary):
+            valid_sentence_indicies.append(index)
+
+    print(f"Number of sentences: {len(italian_sentences)}")
+    print(f"Number of valid sentences: {len(valid_sentence_indicies)}")
+
+
+    italian_sentences = [italian_sentences[i] for i in valid_sentence_indicies]
+    english_sentences = [english_sentences[i] for i in valid_sentence_indicies]
+        
+  elif TOKENIZATION_LEVEL == 'word':
+    import nltk 
+    from nltk.tokenize import word_tokenize
+    nltk.download('punkt_tab')
+
+    def custom_tokenizer(sentence):
+            sentence = sentence.replace(' ', "<SPACE>")
+            sentence = word_tokenize(sentence)
+            i = 0
+            result = []
+            while i < len(sentence):
+                if sentence[i:i+3] == ['<', 'SPACE', '>']:
+                    result.append(' ')
+                    i += 3  # Skip the next two elements
+                else:
+                    result.append(sentence[i])
+                    i += 1
+            return result
+
+    TOKENIZER_ENC = custom_tokenizer
+    TOKENIZER_DEC = custom_tokenizer
+
+    import json
+    with open(os.path.join(CACHE_DIR, 'it_vocabulary_to_index_word.json'), 'r') as json_file:
+        italian_vocabulary = json.load(json_file)
+
+    with open(os.path.join(CACHE_DIR, 'en_vocabulary_to_index_word.json'), 'w') as json_file:
+          english_vocabulary = json.load(json_file)
+    
+    # set max sequence length and filter out sentences that are too long or have invalid tokens
+    max_sequence_length = 200
+
+    # The sentence is less than the max sequence length
+    def is_valid_length(sentence, max_sequence_length):
+        return len(list(sentence)) < (max_sequence_length - 1) # need to re-add the end token so leaving 1 space
+
+    # Filter out sentences that are too long or have invalid tokens
+    valid_sentence_indicies = []
+    for index in tqdm(range(len(italian_sentences))):
+        italian_sentence, english_sentence = italian_sentences[index], english_sentences[index]
+        if is_valid_length(italian_sentence, max_sequence_length) \
+        and is_valid_length(english_sentence, max_sequence_length):
+            valid_sentence_indicies.append(index)
+
+    print(f"Number of sentences: {len(italian_sentences)}")
+    print(f"Number of valid sentences: {len(valid_sentence_indicies)}")
+
+    italian_sentences = [italian_sentences[i] for i in valid_sentence_indicies]
+    english_sentences = [english_sentences[i] for i in valid_sentence_indicies]
+
+  elif TOKENIZATION_LEVEL == 'word_piece':
+
+    from tokenizers import (
+          Tokenizer
+      )
+    import os
+
+    it_tokenizer = Tokenizer.from_file(os.path.join(CACHE_DIR,"it_tokenizer.json"))
+    eng_tokenizer = Tokenizer.from_file(os.path.join(CACHE_DIR,"eng_tokenizer.json"))
+
+    def custom_it_tokenizer(sentence):
+        return it_tokenizer.encode(sentence).tokens
+    
+    def custom_eng_tokenizer(sentence):
+        return eng_tokenizer.encode(sentence).tokens
+    
+    TOKENIZER_ENC = custom_eng_tokenizer
+    TOKENIZER_DEC = custom_it_tokenizer
+
+
+    from tqdm import tqdm 
+    english_sentences = []
+    italian_sentences = []
+
+    for _ in tqdm(range(TOTAL_SENTENCES)):
+        example = next(dataset_iter)
+        italian_sentences.append(example['translation']['it'].lower())
+        english_sentences.append(example['translation']['en'].lower())
+
+    # Get index to character and character to index mappings
+
+    it_vocabulary_to_index = it_tokenizer.get_vocab()
+    en_vocabulary_to_index = eng_tokenizer.get_vocab()
+
+    italian_vocabulary = list(it_vocabulary_to_index.keys())
+    english_vocabulary = list(en_vocabulary_to_index.keys())
+
+    it_index_to_vocabulary = {k:v for k,v in it_vocabulary_to_index.items()}
+    en_index_to_vocabulary = {k:v for k,v in en_vocabulary_to_index.items()}
+
+    # set max sequence length and filter out sentences that are too long or have invalid tokens
+    max_sequence_length = 200
+
+    # The sentence is less than the max sequence length
+    def is_valid_length(sentence, max_sequence_length):
+        return len(list(sentence)) < (max_sequence_length - 1) # need to re-add the end token so leaving 1 space
+
+    # Filter out sentences that are too long or have invalid tokens
+    valid_sentence_indicies = []
+    for index in tqdm(range(len(italian_sentences))):
+        italian_sentence, english_sentence = italian_sentences[index], english_sentences[index]
+        if is_valid_length(italian_sentence, max_sequence_length) \
+        and is_valid_length(english_sentence, max_sequence_length):
+            valid_sentence_indicies.append(index)
+
+    print(f"Number of sentences: {len(italian_sentences)}")
+    print(f"Number of valid sentences: {len(valid_sentence_indicies)}")
+
+    italian_sentences = [italian_sentences[i] for i in valid_sentence_indicies]
+    english_sentences = [english_sentences[i] for i in valid_sentence_indicies]
+
+
+  device = torch.device("cuda")
+  max_sequence_length = 200
+
+  d_model = 512
+  batch_size = 30
+  ffn_hidden = 2048
+  num_heads = 8
+  drop_prob = 0.1
+  num_layers = 1
+  max_sequence_length = 200
+  it_vocab_size = len(italian_vocabulary)
+
+  transformer = Transformer(d_model, 
+                            ffn_hidden,
+                            num_heads, 
+                            drop_prob, 
+                            num_layers, 
+                            max_sequence_length,
+                            it_vocab_size,
+                            en_vocabulary_to_index,
+                            it_vocabulary_to_index,
+                            START_TOKEN, 
+                            END_TOKEN, 
+                            PADDING_TOKEN,
+                            TOKENIZER_ENC,
+                            TOKENIZER_DEC).to(device)
+
+  transformer.load_state_dict(torch.load(os.path.join(MODEL_PATH,f"transformer_model_{TOKENIZATION_LEVEL}_level_tok.pth")))
+  transformer.eval()
+
+  target_sentences_l50 = []
+  predicted_sentences_l50 = []
+  target_sentences_l100 = []
+  predicted_sentences_l100 = []
+  target_sentences_l150 = []
+  predicted_sentences_l150 = []
+  target_sentences_l200 = []
+  predicted_sentences_l200 = []
+  
+
+  for i in tqdm(range(len(english_sentences))):
+
+    english_sentence = english_sentences[i]
+    if len(english_sentence) <= 50:
+      target_sentences_l50.append(italian_sentences[i])
+      predicted_sentences_l50.append(translate(english_sentence))
+    elif len(english_sentence) <= 100:
+      target_sentences_l100.append(italian_sentences[i])
+      predicted_sentences_l100.append(translate(english_sentence))
+    elif len(english_sentence) <= 150:
+      target_sentences_l150.append(italian_sentences[i])
+      predicted_sentences_l150.append(translate(english_sentence))
+    else:
+      target_sentences_l200.append(italian_sentences[i])
+      predicted_sentences_l200.append(translate(english_sentence))
+
+  score_mean_l50 = blue_score(predicted_sentences_l50, target_sentences_l50)
+  score_mean_l100 = blue_score(predicted_sentences_l100, target_sentences_l100)
+  score_mean_l150 = blue_score(predicted_sentences_l150, target_sentences_l150)
+  score_mean_l200 = blue_score(predicted_sentences_l200, target_sentences_l200)
+
+  return score_mean_l50, score_mean_l100, score_mean_l150, score_mean_l200
+
+for tokenization_level in tokenization_levels:
+  score_mean_l50, score_mean_l100, score_mean_l150, score_mean_l200 = predict(tokenization_level)
+  print(f"Tokenization Level: {tokenization_level}")
+  print(f"Score Mean L50: {score_mean_l50}")
+  print(f"Score Mean L100: {score_mean_l100}")
+  print(f"Score Mean L150: {score_mean_l150}")
+  print(f"Score Mean L200: {score_mean_l200}")
+  print("\n")
