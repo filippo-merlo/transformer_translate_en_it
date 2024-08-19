@@ -106,6 +106,8 @@ def blue_score(pred_sentences, it_sentences):
 
 def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences,START_TOKEN,PADDING_TOKEN,END_TOKEN):
   import os 
+  from tqdm import tqdm
+
   if TOKENIZATION_LEVEL == 'character':
     TOKENIZER_ENC = None
     TOKENIZER_DEC = None
@@ -214,8 +216,6 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences,START_TOKEN,P
     from tokenizers import (
           Tokenizer
       )
-    import os
-
     it_tokenizer = Tokenizer.from_file(os.path.join(CACHE_DIR,"it_tokenizer.json"))
     eng_tokenizer = Tokenizer.from_file(os.path.join(CACHE_DIR,"eng_tokenizer.json"))
 
@@ -228,8 +228,6 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences,START_TOKEN,P
     TOKENIZER_ENC = custom_eng_tokenizer
     TOKENIZER_DEC = custom_it_tokenizer
 
-
-    from tqdm import tqdm 
     english_sentences = []
     italian_sentences = []
 
