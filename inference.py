@@ -308,8 +308,6 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
   def bleu_score(pred_sentences, it_sentences):
     blue_scores = []
     for pred_sentence, it_sentence in tqdm(zip(pred_sentences, it_sentences)):
-      print(it_sentence)
-      print(pred_sentence)
       pred_sentence = pred_sentence.split()
       it_sentence = it_sentence.split()
       score = sentence_bleu([pred_sentence], it_sentence, smoothing_function=smoothie)
@@ -328,27 +326,31 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
   
   time_score = []
   for i in tqdm(range(len(english_sentences))):
-    english_sentence = english_sentences[i]
-    if len(english_sentence) <= 50:
-      target_sentences_l50.append(italian_sentences[i])
-      pred_sentece, pred_avg_time = translate(english_sentence)
-      time_score.append(pred_avg_time)
-      predicted_sentences_l50.append(pred_sentece)
-    elif len(english_sentence) <= 100 and len(english_sentence) > 50:
-      target_sentences_l100.append(italian_sentences[i])
-      pred_sentece, pred_avg_time = translate(english_sentence)
-      time_score.append(pred_avg_time)
-      predicted_sentences_l100.append(pred_sentece)
-    elif len(english_sentence) <= 150 and len(english_sentence) > 100:
-      target_sentences_l150.append(italian_sentences[i])
-      pred_sentece, pred_avg_time = translate(english_sentence)
-      time_score.append(pred_avg_time)
-      predicted_sentences_l150.append(pred_sentece)
-    elif len(english_sentence) > 150 and len(english_sentence) <= 200:
-      target_sentences_l200.append(italian_sentences[i])
-      pred_sentece, pred_avg_time = translate(english_sentence)
-      time_score.append(pred_avg_time)
-      predicted_sentences_l200.append(pred_sentece)
+    try:
+      english_sentence = english_sentences[i]
+      if len(english_sentence) <= 50:
+        target_sentences_l50.append(italian_sentences[i])
+        pred_sentece, pred_avg_time = translate(english_sentence)
+        time_score.append(pred_avg_time)
+        predicted_sentences_l50.append(pred_sentece)
+      elif len(english_sentence) <= 100 and len(english_sentence) > 50:
+        target_sentences_l100.append(italian_sentences[i])
+        pred_sentece, pred_avg_time = translate(english_sentence)
+        time_score.append(pred_avg_time)
+        predicted_sentences_l100.append(pred_sentece)
+      elif len(english_sentence) <= 150 and len(english_sentence) > 100:
+        target_sentences_l150.append(italian_sentences[i])
+        pred_sentece, pred_avg_time = translate(english_sentence)
+        time_score.append(pred_avg_time)
+        predicted_sentences_l150.append(pred_sentece)
+      elif len(english_sentence) > 150 and len(english_sentence) <= 200:
+        print('ok')
+        target_sentences_l200.append(italian_sentences[i])
+        pred_sentece, pred_avg_time = translate(english_sentence)
+        time_score.append(pred_avg_time)
+        predicted_sentences_l200.append(pred_sentece)
+    except:
+      pass
     
   score_mean_l50 = bleu_score(predicted_sentences_l50, target_sentences_l50)
   score_mean_l100 = bleu_score(predicted_sentences_l100, target_sentences_l100)
@@ -397,3 +399,5 @@ for tokenization_level in tokenization_levels:
   print(f"Score Mean L200: {score_mean_l200}")
   print(f"Mean Time: {mean_time}")
   print("\n")
+
+
