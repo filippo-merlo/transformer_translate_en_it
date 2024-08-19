@@ -277,6 +277,8 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
         if next_token == END_TOKEN:
           break
         it_sentence = (it_sentence[0] + next_token, )
+      print(eng_sentence)
+      print(it_sentence[0])
     return it_sentence[0], time_score
      
   # compute BLEU SCORE
