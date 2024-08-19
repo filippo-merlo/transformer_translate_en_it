@@ -274,22 +274,25 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
       next_token_prob_distribution = predictions[0][word_counter]
       next_token_index = torch.argmax(next_token_prob_distribution).item()
       if TOKENIZATION_LEVEL == 'word_piece':
-        if it_tokenizer.decode([next_token_index]) == END_TOKEN:
-          break
-        it_ids.append(next_token_index)
-        it_sentence = (it_tokenizer.decode(it_ids), )
-      elif TOKENIZATION_LEVEL == 'word':
-         next_token = it_index_to_vocabulary[next_token_index]
-         if next_token == END_TOKEN:
+          if it_tokenizer.decode([next_token_index]) == END_TOKEN:
             break
-         splitted_sentence = it_sentence[0].split()
-         try:
-          if splitted_sentence[-1] + next_token not in it_vocabulary_to_index.keys():
-              it_sentence = (it_sentence[0] + ' ' + next_token, )
-          else:
-            it_sentence = (it_sentence[0] + next_token, )
-         except:
-            it_sentence = (it_sentence[0] + next_token, )
+          it_ids.append(next_token_index)
+          it_sentence = (it_tokenizer.decode(it_ids), )
+      elif TOKENIZATION_LEVEL == 'word':
+          next_token = it_index_to_vocabulary[next_token_index]
+          if next_token == END_TOKEN:
+              break
+          splitted_sentence = it_sentence[0].split()
+          try:
+              if splitted_sentence[-1] + next_token not in it_vocabulary_to_index.keys():
+                  it_sentence = (it_sentence[0] + ' ' + next_token, )
+              else:
+                  it_sentence = (it_sentence[0] + next_token, )
+          except:
+              it_sentence = (it_sentence[0] + next_token, )
+          if len(it_sentence[0]) >= 200:
+              break
+          
       else:
         next_token = it_index_to_vocabulary[next_token_index]
         if next_token == END_TOKEN:
