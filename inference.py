@@ -281,8 +281,12 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
       elif TOKENIZATION_LEVEL == 'word':
          next_token = it_index_to_vocabulary[next_token_index]
          if next_token == END_TOKEN:
-          break
-         it_sentence = (it_sentence[0] + ' ' + next_token, )
+            break
+         splitted_sentence = it_sentence[0].split()
+         if splitted_sentence[-1] + next_token not in it_vocabulary_to_index.keys():
+            it_sentence = (it_sentence[0] + ' ' + next_token, )
+         else:
+          it_sentence = (it_sentence[0] + next_token, )
       else:
         next_token = it_index_to_vocabulary[next_token_index]
         if next_token == END_TOKEN:
