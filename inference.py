@@ -350,7 +350,7 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
 
   mean_time = np.mean(time_score)
 
-  return score_mean_l50, score_mean_l100, score_mean_l150, score_mean_l200, mean_time
+  return score_mean_l50, score_mean_l100, score_mean_l150, mean_time
 
 
 #%% GET THE DATA
@@ -381,12 +381,11 @@ tokenization_levels = ['character','word','word_piece']
 
 for tokenization_level in tokenization_levels:
   print(tokenization_level)
-  score_mean_l50, score_mean_l100, score_mean_l150, score_mean_l200, mean_time = predict(tokenization_level,english_sentences,italian_sentences,START_TOKEN,PADDING_TOKEN,END_TOKEN)
+  score_mean_l50, score_mean_l100, score_mean_l150, mean_time = predict(tokenization_level,english_sentences,italian_sentences,START_TOKEN,PADDING_TOKEN,END_TOKEN)
   print(f"Tokenization Level: {tokenization_level}")
   print(f"Score Mean L50: {score_mean_l50}")
   print(f"Score Mean L100: {score_mean_l100}")
   print(f"Score Mean L150: {score_mean_l150}")
-  print(f"Score Mean L200: {score_mean_l200}")
   print(f"Mean Time: {mean_time}")
   print("\n")
 
