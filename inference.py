@@ -104,34 +104,8 @@ def blue_score(pred_sentences, it_sentences):
     blue_scores.append(score)
   return np.mean(blue_scores)
 
-#%% GET THE DATA
-# Load the dataset
-from datasets import load_dataset
-ds = load_dataset("yhavinga/ccmatrix", "en-it", cache_dir=CACHE_DIR)
-dataset_iter = iter(ds['train'])
 
-# Define vocabulary
-# 1 Character based tokenization
-START_TOKEN = '<START>'
-PADDING_TOKEN = '<PADDING>'
-END_TOKEN = '<END>'
-
-TOTAL_SENTENCES = 203000
-TRAINING_SENTENCES = 200000
-
-italian_sentences = []
-english_sentences = []
-for i in tqdm(range(TOTAL_SENTENCES)):
-      if i <= TRAINING_SENTENCES:
-          continue
-      else:
-        example = next(dataset_iter)
-        italian_sentences.append(example['translation']['it'].lower())
-        english_sentences.append(example['translation']['en'].lower())
-          
-tokenization_levels = ['character','word_piece','word']
-
-def predict(TOKENIZATION_LEVEL):
+def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences,START_TOKEN,PADDING_TOKEN,END_TOKEN):
 
   if TOKENIZATION_LEVEL == 'character':
     TOKENIZER_ENC = None
@@ -361,8 +335,36 @@ def predict(TOKENIZATION_LEVEL):
 
   return score_mean_l50, score_mean_l100, score_mean_l150, score_mean_l200
 
+
+#%% GET THE DATA
+# Load the dataset
+from datasets import load_dataset
+ds = load_dataset("yhavinga/ccmatrix", "en-it", cache_dir=CACHE_DIR)
+dataset_iter = iter(ds['train'])
+
+# Define vocabulary
+# 1 Character based tokenization
+START_TOKEN = '<START>'
+PADDING_TOKEN = '<PADDING>'
+END_TOKEN = '<END>'
+
+TOTAL_SENTENCES = 203000
+TRAINING_SENTENCES = 200000
+
+italian_sentences = []
+english_sentences = []
+for i in tqdm(range(TOTAL_SENTENCES)):
+      if i <= TRAINING_SENTENCES:
+          continue
+      else:
+        example = next(dataset_iter)
+        italian_sentences.append(example['translation']['it'].lower())
+        english_sentences.append(example['translation']['en'].lower())
+          
+tokenization_levels = ['character','word_piece','word']
+
 for tokenization_level in tokenization_levels:
-  score_mean_l50, score_mean_l100, score_mean_l150, score_mean_l200 = predict(tokenization_level)
+  score_mean_l50, score_mean_l100, score_mean_l150, score_mean_l200 = predict(tokenization_level,english_sentences,italian_sentences,START_TOKEN,PADDING_TOKEN,END_TOKEN)
   print(f"Tokenization Level: {tokenization_level}")
   print(f"Score Mean L50: {score_mean_l50}")
   print(f"Score Mean L100: {score_mean_l100}")
