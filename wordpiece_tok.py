@@ -60,18 +60,6 @@ eng_tokenizer.train_from_iterator(get_training_corpus(english_sentences), traine
 it_tokenizer.decoder = decoders.WordPiece(prefix="##")
 eng_tokenizer.decoder = decoders.WordPiece(prefix="##")
 
-print('Sentence')
-print("Gli angeli e la pappà che è così fresca.")
-it_encoding = it_tokenizer.encode("Gli angeli e la pappà che è così fresca.".lower())
-print('Sentence enc')
-print(it_encoding.tokens)
-print('ids')
-print(type(it_encoding.ids))
-print(it_encoding.ids)
-it_decoding = it_tokenizer.decode(it_encoding.ids)
-print('Sentence dec')
-print(it_decoding)
-
 import os
 it_tokenizer.save(os.path.join(CACHE_DIR,"it_tokenizer.json"))
 eng_tokenizer.save(os.path.join(CACHE_DIR,"eng_tokenizer.json"))
