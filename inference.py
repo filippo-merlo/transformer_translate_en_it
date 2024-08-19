@@ -280,22 +280,22 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences,START_TOKEN,P
         it_sentence = (it_sentence[0] + next_token, )
     return it_sentence[0]
      
-# compute BLUE SCORE
-from nltk.translate.bleu_score import sentence_bleu
-from nltk.translate.bleu_score import SmoothingFunction
-smoothie = SmoothingFunction().method4
+  # compute BLUE SCORE
+  from nltk.translate.bleu_score import sentence_bleu
+  from nltk.translate.bleu_score import SmoothingFunction
+  smoothie = SmoothingFunction().method4
 
-def blue_score(pred_sentences, it_sentences):
-  blue_scores = []
-  for pred_sentence, it_sentence in tqdm(zip(pred_sentences, it_sentences)):
-    pred_sentence = pred_sentence.split()
-    it_sentence = it_sentence.split()
-    score = sentence_bleu([pred_sentence], it_sentence, smoothing_function=smoothie)
-    print(pred_sentence)
-    print(it_sentence)
-    print(score)
-    blue_scores.append(score)
-  return np.mean(blue_scores)
+  def blue_score(pred_sentences, it_sentences):
+    blue_scores = []
+    for pred_sentence, it_sentence in tqdm(zip(pred_sentences, it_sentences)):
+      pred_sentence = pred_sentence.split()
+      it_sentence = it_sentence.split()
+      score = sentence_bleu([pred_sentence], it_sentence, smoothing_function=smoothie)
+      print(pred_sentence)
+      print(it_sentence)
+      print(score)
+      blue_scores.append(score)
+    return np.mean(blue_scores)
 
 
   target_sentences_l50 = []
