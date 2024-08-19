@@ -3,7 +3,6 @@ import torch
 import numpy as np
 from config import *
 from model import *
-import os 
 from tqdm import tqdm
 
 # A large negative constant used to represent negative infinity in mask calculations.
@@ -106,7 +105,7 @@ def blue_score(pred_sentences, it_sentences):
 
 
 def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences,START_TOKEN,PADDING_TOKEN,END_TOKEN):
-
+  import os 
   if TOKENIZATION_LEVEL == 'character':
     TOKENIZER_ENC = None
     TOKENIZER_DEC = None
