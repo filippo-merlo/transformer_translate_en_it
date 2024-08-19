@@ -92,6 +92,9 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,
         en_vocabulary_to_index = json.load(json_file)
         print('English Vocabulary to Index',len(en_vocabulary_to_index))
     
+    italian_vocabulary = list(it_vocabulary_to_index.keys())
+    english_vocabulary = list(en_vocabulary_to_index.keys())
+    
     # set max sequence length and filter out sentences that are too long or have invalid tokens
     max_sequence_length = 200
 
