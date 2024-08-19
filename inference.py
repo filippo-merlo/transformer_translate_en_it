@@ -6,7 +6,7 @@ from model import *
 from tqdm import tqdm
 
 
-def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences,START_TOKEN,PADDING_TOKEN,END_TOKEN):
+def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences, START_TOKEN,PADDING_TOKEN,END_TOKEN):
   import os 
   from tqdm import tqdm
   max_sequence_length = 200
@@ -127,14 +127,6 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences,START_TOKEN,P
     
     TOKENIZER_ENC = custom_eng_tokenizer
     TOKENIZER_DEC = custom_it_tokenizer
-
-    english_sentences = []
-    italian_sentences = []
-
-    for _ in tqdm(range(TOTAL_SENTENCES)):
-        example = next(dataset_iter)
-        italian_sentences.append(example['translation']['it'].lower())
-        english_sentences.append(example['translation']['en'].lower())
 
     # Get index to character and character to index mappings
 
@@ -268,8 +260,6 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences,START_TOKEN,P
       next_token_index = torch.argmax(next_token_prob_distribution).item()
       if TOKENIZATION_LEVEL == 'word_piece':
         if it_tokenizer.decode([next_token_index]) == END_TOKEN:
-          print(it_tokenizer.decode([next_token_index]))
-          print(END_TOKEN)
           break
         it_ids.append(next_token_index)
         it_sentence = (it_tokenizer.decode(it_ids), )
@@ -280,20 +270,17 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences,START_TOKEN,P
         it_sentence = (it_sentence[0] + next_token, )
     return it_sentence[0]
      
-  # compute BLUE SCORE
+  # compute BLEU SCORE
   from nltk.translate.bleu_score import sentence_bleu
   from nltk.translate.bleu_score import SmoothingFunction
   smoothie = SmoothingFunction().method4
 
-  def blue_score(pred_sentences, it_sentences):
+  def bleu_score(pred_sentences, it_sentences):
     blue_scores = []
     for pred_sentence, it_sentence in tqdm(zip(pred_sentences, it_sentences)):
       pred_sentence = pred_sentence.split()
       it_sentence = it_sentence.split()
       score = sentence_bleu([pred_sentence], it_sentence, smoothing_function=smoothie)
-      print(pred_sentence)
-      print(it_sentence)
-      print(score)
       blue_scores.append(score)
     return np.mean(blue_scores)
 
@@ -324,10 +311,10 @@ def predict(TOKENIZATION_LEVEL,english_sentences,italian_sentences,START_TOKEN,P
       target_sentences_l200.append(italian_sentences[i])
       predicted_sentences_l200.append(translate(english_sentence))
 
-  score_mean_l50 = blue_score(predicted_sentences_l50, target_sentences_l50)
-  score_mean_l100 = blue_score(predicted_sentences_l100, target_sentences_l100)
-  score_mean_l150 = blue_score(predicted_sentences_l150, target_sentences_l150)
-  score_mean_l200 = blue_score(predicted_sentences_l200, target_sentences_l200)
+  score_mean_l50 = bleu_score(predicted_sentences_l50, target_sentences_l50)
+  score_mean_l100 = bleu_score(predicted_sentences_l100, target_sentences_l100)
+  score_mean_l150 = bleu_score(predicted_sentences_l150, target_sentences_l150)
+  score_mean_l200 = bleu_score(predicted_sentences_l200, target_sentences_l200)
 
   return score_mean_l50, score_mean_l100, score_mean_l150, score_mean_l200
 
@@ -357,7 +344,7 @@ for i in tqdm(range(TOTAL_SENTENCES)):
         italian_sentences.append(example['translation']['it'].lower())
         english_sentences.append(example['translation']['en'].lower())
           
-tokenization_levels = ['character','word_piece','word']
+tokenization_levels = ['word_piece','character','word']
 
 for tokenization_level in tokenization_levels:
   score_mean_l50, score_mean_l100, score_mean_l150, score_mean_l200 = predict(tokenization_level,english_sentences,italian_sentences,START_TOKEN,PADDING_TOKEN,END_TOKEN)
